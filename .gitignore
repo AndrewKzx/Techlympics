@@ -1,9 +1,6 @@
-*.db
-
-*.py[cod]
-
-.web
-
+*.db
+*.py[cod]
+./.web
+.web
+.web/package.json
 __pycache__/
-.web/package.json
-./.web
