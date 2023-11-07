@@ -36,8 +36,8 @@ export default function Component() {
     }
   }, [router])
 
-  const ref_new_item = useRef(null); refs['ref_new_item'] = ref_new_item;
   const ref_income = useRef(null); refs['ref_income'] = ref_income;
+  const ref_new_item = useRef(null); refs['ref_new_item'] = ref_new_item;
   const ref_expenses = useRef(null); refs['ref_expenses'] = ref_expenses;
 
   return (
@@ -82,7 +82,7 @@ export default function Component() {
 </Link>
 </HStack>
   <VStack alignItems={`flex-start`} sx={{"width": "100%", "overflowY": "auto", "padding": "1em"}}>
-  <Box as={`form`} onSubmit={(_e0) => addEvents([Event("state.handle_submit", {form_data:{"expenses": getRefValue(ref_expenses), "income": getRefValue(ref_income)}})], (_e0))}>
+  <Box as={`form`} onSubmit={(_e0) => addEvents([Event("state.handle_submit", {form_data:{"income": getRefValue(ref_income), "expenses": getRefValue(ref_expenses)}})], (_e0))}>
   <Text className={`text-black-500 font-bold text-2xl`}>
   {`Financial Information`}
 </Text>
@@ -106,13 +106,13 @@ export default function Component() {
 </Text>
   <Container sx={{"padding": "1rem", "border": "1px solid #F4F3F6", "borderRadius": "0.375rem", "boxShadow": "0px 0px 0px 1px rgba(84, 82, 95, 0.14)"}}>
   <OrderedList>
-  {state.items.map((spilhndo, i) => (
+  {state.items.map((lqrolngb, i) => (
   <ListItem key={i}>
   <HStack>
   <Text sx={{"fontSize": "1.25em"}}>
-  {spilhndo}
+  {lqrolngb}
 </Text>
-  <Button onClick={(_e) => addEvents([Event("state.finish_item", {item:spilhndo})], (_e))} sx={{"height": "1.5em", "backgroundColor": "white", "textColor": "white", "fontSize": "1em"}}>
+  <Button onClick={(_e) => addEvents([Event("state.finish_item", {item:lqrolngb})], (_e))} sx={{"height": "1.5em", "backgroundColor": "white", "textColor": "white", "fontSize": "1em"}}>
   {`❌`}
 </Button>
 </HStack>
