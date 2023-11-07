@@ -45,6 +45,8 @@ export default function Component() {
   }, [router])
 
   const ref_new_item = useRef(null); refs['ref_new_item'] = ref_new_item;
+  const ref_income = useRef(null); refs['ref_income'] = ref_income;
+  const ref_expenses = useRef(null); refs['ref_expenses'] = ref_expenses;
 
   return (
     <Fragment>
@@ -88,7 +90,7 @@ export default function Component() {
 </Link>
 </HStack>
   <VStack alignItems={`flex-start`} sx={{"width": "100%", "overflowY": "auto", "padding": "1em"}}>
-  <VStack>
+  <Box as={`form`} onSubmit={(_e0) => addEvents([Event("state.handle_submit", {form_data:{"expenses": getRefValue(ref_expenses), "income": getRefValue(ref_income)}})], (_e0))}>
   <Text className={`text-black-500 font-bold text-2xl`}>
   {`Financial Information`}
 </Text>
@@ -96,29 +98,29 @@ export default function Component() {
   <Text className={`text-black-500 font-bold`}>
   {`Household Income`}
 </Text>
-  <Input placeholder={`Enter Expense 1`} type={`text`}/>
+  <Input id={`income`} placeholder={`Enter Expense 1`} ref={ref_income} type={`text`}/>
   <Text className={`text-black-500 font-bold`}>
   {`Monthly Expenses`}
 </Text>
-  <Input placeholder={`Enter Expense 2`} type={`text`}/>
-  <Button className={`bg-blue-500 text-black mt-3`}>
+  <Input id={`expenses`} placeholder={`Enter Expense 2`} ref={ref_expenses} type={`text`}/>
+  <Button className={`bg-blue-500 text-black mt-3`} type={`submit`}>
   {`Submit`}
 </Button>
 </Container>
-</VStack>
+</Box>
   <Spacer/>
   <Text className={`text-black-500 font-bold text-2xl`}>
   {`Major Expenses`}
 </Text>
   <Container sx={{"padding": "1rem", "border": "1px solid #F4F3F6", "borderRadius": "0.375rem", "boxShadow": "0px 0px 0px 1px rgba(84, 82, 95, 0.14)"}}>
   <OrderedList>
-  {state.items.map((ppwgperg, i) => (
+  {state.items.map((pvugncgc, i) => (
   <ListItem key={i}>
   <HStack>
   <Text sx={{"fontSize": "1.25em"}}>
-  {ppwgperg}
+  {pvugncgc}
 </Text>
-  <Button onClick={(_e) => addEvents([Event("state.finish_item", {item:ppwgperg})], (_e))} sx={{"height": "1.5em", "backgroundColor": "white", "textColor": "white", "fontSize": "1em"}}>
+  <Button onClick={(_e) => addEvents([Event("state.finish_item", {item:pvugncgc})], (_e))} sx={{"height": "1.5em", "backgroundColor": "white", "textColor": "white", "fontSize": "1em"}}>
   {`❌`}
 </Button>
 </HStack>

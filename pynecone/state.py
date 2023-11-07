@@ -18,6 +18,10 @@ class State(rx.State):
     # whether an item entered is valid
     invalid_item: bool = False
 
+    submitted_data: dict = {}
+
+
+
     def add_item(self, form_data: dict[str, str]):
         """Add a new item to the todo list.
 
@@ -44,5 +48,8 @@ class State(rx.State):
         """
         self.items.pop(self.items.index(item))
 
+    def handle_submit(self, form_data: dict):
+        self.submitted_data = form_data
+        print(form_data)
 
     pass

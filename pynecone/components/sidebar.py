@@ -5,7 +5,6 @@ from pynecone.state import State
 
 import reflex as rx
 
-
 #Ignore
 def sidebar_header() -> rx.Component:
     """Sidebar header.
@@ -67,23 +66,32 @@ def sidebar_footer() -> rx.Component:
         padding="1em",
     )
 
-# Financial Information Section named as Form 1 
 def form_1() -> rx.Component:
-    return rx.vstack(
+    return rx.form(
         rx.text("Financial Information", class_name="text-black-500 font-bold text-2xl"),
         rx.container(
             rx.text("Household Income", class_name="text-black-500 font-bold"),
-            rx.input(placeholder="Enter Expense 1"),
+            rx.input(placeholder="Enter Expense 1", id="income"),
             rx.text("Monthly Expenses", class_name="text-black-500 font-bold"),
-            rx.input(placeholder="Enter Expense 2"),
-            rx.button("Submit", class_name="bg-blue-500 text-black mt-3"),
+            rx.input(placeholder="Enter Expense 2", id="expenses"),
+            rx.button("Submit", class_name="bg-blue-500 text-black mt-3", type_="submit"),
             padding="1rem",
             max_width="400px",
             border=styles.border,
             border_radius=styles.border_radius,
             box_shadow=styles.box_shadow,
+
+            
         ),
+        on_submit=State.handle_submit,
     )
+def display_submitted_data() -> rx.Component:
+    return rx.container(
+        rx.text("Submitted Data", class_name="text-black-500 font-bold text-2xl"),
+        rx.text("Household Income: " + State.submitted_data.get("income")),
+        rx.text("Monthly Expenses: " + State.submitted_data.get("expenses")),
+    )
+
 
 #Can ignore this shit
 def sidebar_item(text: str, icon: str, url: str) -> rx.Component:
@@ -215,6 +223,7 @@ def sidebar() -> rx.Component:
             sidebar_header(),
             rx.vstack(
                 form_1(),
+                # display_submitted_data(),
                 rx.spacer(),
                 rx.text("Major Expenses", class_name="text-black-500 font-bold text-2xl"),
 
