@@ -5,11 +5,8 @@ from pynecone.state import State
 
 import reflex as rx
 
-from typing import List
 
-options: List[str] = ["1", "2", "3", "4"]
-
-
+#Ignore
 def sidebar_header() -> rx.Component:
     """Sidebar header.
 
@@ -48,7 +45,7 @@ def sidebar_header() -> rx.Component:
         padding="1em",
     )
 
-
+#Ignore
 def sidebar_footer() -> rx.Component:
     """Sidebar footer.
 
@@ -70,7 +67,25 @@ def sidebar_footer() -> rx.Component:
         padding="1em",
     )
 
+# Financial Information Section named as Form 1 
+def form_1() -> rx.Component:
+    return rx.vstack(
+        rx.text("Financial Information", class_name="text-black-500 font-bold text-2xl"),
+        rx.container(
+            rx.text("Household Income", class_name="text-black-500 font-bold"),
+            rx.input(placeholder="Enter Expense 1"),
+            rx.text("Monthly Expenses", class_name="text-black-500 font-bold"),
+            rx.input(placeholder="Enter Expense 2"),
+            rx.button("Submit", class_name="bg-blue-500 text-black mt-3"),
+            padding="1rem",
+            max_width="400px",
+            border=styles.border,
+            border_radius=styles.border_radius,
+            box_shadow=styles.box_shadow,
+        ),
+    )
 
+#Can ignore this shit
 def sidebar_item(text: str, icon: str, url: str) -> rx.Component:
     """Sidebar item.
 
@@ -116,104 +131,121 @@ def sidebar_item(text: str, icon: str, url: str) -> rx.Component:
         width="100%",
     )
 
+#Mechanism to add new item into the form
+def new_item() -> rx.Component:
+    """Render the new item form.
+
+    See: https://reflex.dev/docs/library/forms/form
+
+    Returns:
+        A form to add a new item to the todo list.
+    """
+    return rx.form(
+        # Pressing enter will submit the form.
+        rx.input(
+            id="new_item",
+            placeholder="Add an expense...",
+            bg="white",
+            is_invalid=State.invalid_item,
+        ),
+        # Clicking the button will also submit the form.
+        rx.center(
+            rx.button("Add", type_="submit", bg="green", color="white", margin_top="1rem"),
+        ),
+        on_submit=State.add_item,
+    )
+
+#Major Expenses section 
+def todo_item(item: rx.Var[str]) -> rx.Component:
+    """Render an item in the todo list.
+
+    NOTE: When using `rx.foreach`, the item will be a Var[str] rather than a str.
+
+    Args:
+        item: The todo list item.
+
+    Returns:
+        A single rendered todo list item.
+    """
+    return rx.list_item(
+        rx.hstack(
+            # A button to finish the item.
+            rx.text(item, font_size="1.25em"),
+            rx.button(
+                "❌",
+                on_click=lambda: State.finish_item(item),
+                height="1.5em",
+                background_color="white",
+                text_color="white",  # Set the text color to white
+                font_size="1em",  # Adjust the font size as needed
+            ),
+            # The item text.
+            
+        )
+    )
+
+#To do list to render the items from the to do 
+def todo_list() -> rx.Component:
+    """Render the todo list.
+
+    Returns:
+        The rendered todo list.
+    """
+    return rx.ordered_list(
+        # rx.foreach is necessary to iterate over state vars.
+        # see: https://reflex.dev/docs/library/layout/foreach
+        rx.foreach(State.items, lambda item: todo_item(item)),
+    )
 
 
+#The main place to adjust the design and add components 
+#components used:
+#sidebar_header, form_1, todo_list, new_item, sidebar_footer
 def sidebar() -> rx.Component:
     """The sidebar.
 
     Returns:
         The sidebar component.
     """
-
     # Get all the decorated pages and add them to the sidebar.
     from reflex.page import get_decorated_pages
 
     return rx.box(
-    rx.vstack(
-        sidebar_header(),
+        rx.vstack(
+            sidebar_header(),
+            rx.vstack(
+                form_1(),
+                rx.spacer(),
+                rx.text("Major Expenses", class_name="text-black-500 font-bold text-2xl"),
 
-        rx.container(
-            rx.text("Household Income", class_name="text-black-500 font-bold"),  # Add a text element as a title
-            rx.input(
-            placeholder="RM",
-            margin_top="8px",
-            border_color="#eaeaef",
+                rx.container(
 
+                todo_list(),
+                new_item(),
+
+                padding="1rem",
+                border=styles.border,
+                border_radius=styles.border_radius,
+                box_shadow=styles.box_shadow,
+                ),
+                rx.divider(),
+
+                width="100%",
+                overflow_y="auto",
+                align_items="flex-start",
+                padding="1em",
             ),
-            rx.text("Monthly Income", class_name="text-black-500 font-bold mt-3"),  # Add a text element as a title
-            rx.input(
-            placeholder="RM",
-            margin_top="8px",
-            border_color="#eaeaef",
-
-            ),
-            rx.button("Generate", class_name="bg-blue-500 mt-5", background_color="#24A148", text_color="white"),  # Center align and make it green
-            padding="1rem",
-            margin="1rem",  # Add margin property here
-            max_width="400px",
-            border=styles.border,
-            border_radius=styles.border_radius,
-            box_shadow=styles.box_shadow,
-            
+            rx.spacer(),
+            sidebar_footer(),
+            height="100dvh",
         ),
-        rx.spacer(),
-        rx.container(
+        display=["none", "none", "block"],
+        min_width=styles.sidebar_width,
+        height="100%",
+        position="sticky",
+        top="0px",
+        border_right=styles.border,
+    )
 
-            rx.container(
-            rx.text("Your Monthly Payment: RM3000", class_name="text-black-500 font-bold"),  # Add a text element as a title
-
-            max_width="250px",
-            margin="2%",
-            border=styles.border,
-            border_radius=styles.border_radius,
-            box_shadow=styles.box_shadow,
-            ),
-            rx.text("Loan Tenure", class_name="text-black-500 font-bold"),  # Add a text element as a title
-            rx.slider(
-           
-            ),
-        
-
-            rx.text("Interest Rate", class_name="text-black-500 font-bold"),  # Add a text element as a title
-            rx.input(
-            placeholder="            %",
-            margin_top="8px",
-            border_color="#eaeaef",
-            max_width="100px",
-            ),
-            
-            rx.select(
-                options,
-               
-            ),
-            rx.text("Monthly Income", class_name="text-black-500 font-bold mt-3"),  # Add a text element as a title
-            rx.input(
-            placeholder="RM",
-            margin_top="8px",
-            border_color="#eaeaef",
-
-            ),
-
-            
-            rx.button("Generate", class_name="bg-blue-500 mt-5", background_color="#24A148", text_color="white"),  # Center align and make it green
-            padding="1rem",
-            margin="1rem",  # Add margin property here
-            max_width="400px",
-            border=styles.border,
-            border_radius=styles.border_radius,
-            box_shadow=styles.box_shadow,
-        ),
-
-        sidebar_footer(),
-        height="100dvh",
-    ),
-    display=["none", "none", "block"],
-    min_width=styles.sidebar_width,
-    height="100%",
-    width="60%",
-    position="sticky",
-    top="0px",
-    border_right=styles.border,
-)
-
+  
 

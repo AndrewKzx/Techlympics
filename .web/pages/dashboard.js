@@ -3,7 +3,7 @@ import { useRouter } from "next/router"
 import { Event, getAllLocalStorageItems, getRefValue, getRefValues, isTrue, preventDefault, refs, set_val, spreadArraysOrObjects, uploadFiles, useEventLoop } from "/utils/state"
 import { ColorModeContext, EventLoopContext, initialEvents, StateContext } from "/utils/context.js"
 import "focus-visible/dist/focus-visible"
-import { Box, Button, Center, Code, Container, Heading, HStack, Image, Input, Link, Menu, MenuButton, MenuDivider, MenuItem, MenuList, Modal, ModalBody, ModalContent, ModalHeader, ModalOverlay, option, Select, Slider, SliderFilledTrack, SliderThumb, SliderTrack, Spacer, Text, VStack } from "@chakra-ui/react"
+import { Box, Button, Center, Code, Container, Divider, Heading, HStack, Image, Input, Link, ListItem, Menu, MenuButton, MenuDivider, MenuItem, MenuList, Modal, ModalBody, ModalContent, ModalHeader, ModalOverlay, OrderedList, Spacer, Text, VStack } from "@chakra-ui/react"
 import { getEventURL } from "/utils/state.js"
 import NextLink from "next/link"
 import { HamburgerIcon } from "@chakra-ui/icons"
@@ -36,6 +36,7 @@ export default function Component() {
     }
   }, [router])
 
+  const ref_new_item = useRef(null); refs['ref_new_item'] = ref_new_item;
 
   return (
     <Fragment>
@@ -65,7 +66,7 @@ export default function Component() {
 )}
 </Fragment>
   <HStack alignItems={`flex-start`} sx={{"transition": "left 0.5s, width 0.5s", "position": "relative"}}>
-  <Box sx={{"display": ["none", "none", "block"], "minWidth": "20em", "height": "100%", "width": "60%", "position": "sticky", "top": "0px", "borderRight": "1px solid #F4F3F6"}}>
+  <Box sx={{"display": ["none", "none", "block"], "minWidth": "20em", "height": "100%", "position": "sticky", "top": "0px", "borderRight": "1px solid #F4F3F6"}}>
   <VStack sx={{"height": "100dvh"}}>
   <HStack sx={{"width": "100%", "borderBottom": "1px solid #F4F3F6", "padding": "1em"}}>
   <Text sx={{"backgroundImage": "linear-gradient(271.68deg, #EE756A 0.75%, #756AEE 88.52%)", "backgroundClip": "text", "fontWeight": "bold", "fontSize": "2em"}}>
@@ -78,61 +79,56 @@ export default function Component() {
 </Center>
 </Link>
 </HStack>
-  <Container sx={{"padding": "1rem", "margin": "1rem", "maxWidth": "400px", "border": "1px solid #F4F3F6", "borderRadius": "0.375rem", "boxShadow": "0px 0px 0px 1px rgba(84, 82, 95, 0.14)"}}>
+  <VStack alignItems={`flex-start`} sx={{"width": "100%", "overflowY": "auto", "padding": "1em"}}>
+  <VStack>
+  <Text className={`text-black-500 font-bold text-2xl`}>
+  {`Financial Information`}
+</Text>
+  <Container sx={{"padding": "1rem", "maxWidth": "400px", "border": "1px solid #F4F3F6", "borderRadius": "0.375rem", "boxShadow": "0px 0px 0px 1px rgba(84, 82, 95, 0.14)"}}>
   <Text className={`text-black-500 font-bold`}>
   {`Household Income`}
 </Text>
-  <Input placeholder={`RM`} sx={{"marginTop": "8px", "borderColor": "#eaeaef"}} type={`text`}/>
-  <Text className={`text-black-500 font-bold mt-3`}>
-  {`Monthly Income`}
+  <Input placeholder={`Enter Expense 1`} type={`text`}/>
+  <Text className={`text-black-500 font-bold`}>
+  {`Monthly Expenses`}
 </Text>
-  <Input placeholder={`RM`} sx={{"marginTop": "8px", "borderColor": "#eaeaef"}} type={`text`}/>
-  <Button className={`bg-blue-500 mt-5`} sx={{"backgroundColor": "#24A148", "textColor": "white"}}>
-  {`Generate`}
+  <Input placeholder={`Enter Expense 2`} type={`text`}/>
+  <Button className={`bg-blue-500 text-black mt-3`}>
+  {`Submit`}
 </Button>
 </Container>
+</VStack>
   <Spacer/>
-  <Container sx={{"padding": "1rem", "margin": "1rem", "maxWidth": "400px", "border": "1px solid #F4F3F6", "borderRadius": "0.375rem", "boxShadow": "0px 0px 0px 1px rgba(84, 82, 95, 0.14)"}}>
-  <Container sx={{"maxWidth": "250px", "margin": "2%", "border": "1px solid #F4F3F6", "borderRadius": "0.375rem", "boxShadow": "0px 0px 0px 1px rgba(84, 82, 95, 0.14)"}}>
-  <Text className={`text-black-500 font-bold`}>
-  {`Your Monthly Payment: RM3000`}
+  <Text className={`text-black-500 font-bold text-2xl`}>
+  {`Major Expenses`}
 </Text>
-</Container>
-  <Text className={`text-black-500 font-bold`}>
-  {`Loan Tenure`}
+  <Container sx={{"padding": "1rem", "border": "1px solid #F4F3F6", "borderRadius": "0.375rem", "boxShadow": "0px 0px 0px 1px rgba(84, 82, 95, 0.14)"}}>
+  <OrderedList>
+  {state.items.map((mvctzznn, i) => (
+  <ListItem key={i}>
+  <HStack>
+  <Text sx={{"fontSize": "1.25em"}}>
+  {mvctzznn}
 </Text>
-  <Slider>
-  <SliderTrack>
-  <SliderFilledTrack/>
-</SliderTrack>
-  <SliderThumb/>
-</Slider>
-  <Text className={`text-black-500 font-bold`}>
-  {`Interest Rate`}
-</Text>
-  <Input placeholder={`            %`} sx={{"marginTop": "8px", "borderColor": "#eaeaef", "maxWidth": "100px"}} type={`text`}/>
-  <Select>
-  <option value={`1`}>
-  {`1`}
-</option>
-  <option value={`2`}>
-  {`2`}
-</option>
-  <option value={`3`}>
-  {`3`}
-</option>
-  <option value={`4`}>
-  {`4`}
-</option>
-</Select>
-  <Text className={`text-black-500 font-bold mt-3`}>
-  {`Monthly Income`}
-</Text>
-  <Input placeholder={`RM`} sx={{"marginTop": "8px", "borderColor": "#eaeaef"}} type={`text`}/>
-  <Button className={`bg-blue-500 mt-5`} sx={{"backgroundColor": "#24A148", "textColor": "white"}}>
-  {`Generate`}
+  <Button onClick={(_e) => addEvents([Event("state.finish_item", {item:mvctzznn})], (_e))} sx={{"height": "1.5em", "backgroundColor": "white", "textColor": "white", "fontSize": "1em"}}>
+  {`❌`}
 </Button>
+</HStack>
+</ListItem>
+))}
+</OrderedList>
+  <Box as={`form`} onSubmit={(_e0) => addEvents([Event("state.add_item", {form_data:{"new_item": getRefValue(ref_new_item)}})], (_e0))}>
+  <Input id={`new_item`} isInvalid={state.invalid_item} placeholder={`Add an expense...`} ref={ref_new_item} sx={{"bg": "white"}} type={`text`}/>
+  <Center>
+  <Button sx={{"bg": "green", "color": "white", "marginTop": "1rem"}} type={`submit`}>
+  {`Add`}
+</Button>
+</Center>
+</Box>
 </Container>
+  <Divider/>
+</VStack>
+  <Spacer/>
   <HStack sx={{"width": "100%", "borderTop": "1px solid #F4F3F6", "padding": "1em"}}>
   <Spacer/>
   <Link as={NextLink} href={`https://reflex.dev/docs/getting-started/introduction/`}>
