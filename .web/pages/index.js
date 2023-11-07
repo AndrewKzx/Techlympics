@@ -1,10 +1,10 @@
 import { Fragment, useContext, useEffect, useRef, useState } from "react"
 import { useRouter } from "next/router"
-import { Event, getAllLocalStorageItems, getRefValue, getRefValues, isTrue, preventDefault, refs, spreadArraysOrObjects, uploadFiles, useEventLoop } from "/utils/state"
+import { Event, getAllLocalStorageItems, getRefValue, getRefValues, isTrue, preventDefault, refs, set_val, spreadArraysOrObjects, uploadFiles, useEventLoop } from "/utils/state"
 import { ColorModeContext, EventLoopContext, initialEvents, StateContext } from "/utils/context.js"
 import "focus-visible/dist/focus-visible"
 import "katex/dist/katex.min.css"
-import { Box, Center, Code, Heading, HStack, Image, Link, ListItem, Menu, MenuButton, MenuDivider, MenuItem, MenuList, Modal, ModalBody, ModalContent, ModalHeader, ModalOverlay, OrderedList, Spacer, Text, UnorderedList, VStack } from "@chakra-ui/react"
+import { Box, Button, Center, Code, Container, Heading, HStack, Image, Input, Link, ListItem, Menu, MenuButton, MenuDivider, MenuItem, MenuList, Modal, ModalBody, ModalContent, ModalHeader, ModalOverlay, option, OrderedList, Select, Slider, SliderFilledTrack, SliderThumb, SliderTrack, Spacer, Text, UnorderedList, VStack } from "@chakra-ui/react"
 import { getEventURL } from "/utils/state.js"
 import NextLink from "next/link"
 import ReactMarkdown from "react-markdown"
@@ -73,10 +73,12 @@ export default function Component() {
 )}
 </Fragment>
   <HStack alignItems={`flex-start`} sx={{"transition": "left 0.5s, width 0.5s", "position": "relative"}}>
-  <Box sx={{"display": ["none", "none", "block"], "minWidth": "20em", "height": "100%", "position": "sticky", "top": "0px", "borderRight": "1px solid #F4F3F6"}}>
+  <Box sx={{"display": ["none", "none", "block"], "minWidth": "20em", "height": "100%", "width": "60%", "position": "sticky", "top": "0px", "borderRight": "1px solid #F4F3F6"}}>
   <VStack sx={{"height": "100dvh"}}>
   <HStack sx={{"width": "100%", "borderBottom": "1px solid #F4F3F6", "padding": "1em"}}>
-  <Image src={`/icon.svg`} sx={{"height": "2em"}}/>
+  <Text sx={{"backgroundImage": "linear-gradient(271.68deg, #EE756A 0.75%, #756AEE 88.52%)", "backgroundClip": "text", "fontWeight": "bold", "fontSize": "2em"}}>
+  {`EconoMe`}
+</Text>
   <Spacer/>
   <Link as={NextLink} href={`https://github.com/reflex-dev/reflex`}>
   <Center sx={{"boxShadow": "0px 0px 0px 1px rgba(84, 82, 95, 0.14)", "bg": "transparent", "borderRadius": "0.375rem", "_hover": {"bg": "#F5EFFE"}}}>
@@ -84,33 +86,61 @@ export default function Component() {
 </Center>
 </Link>
 </HStack>
-  <VStack alignItems={`flex-start`} sx={{"width": "100%", "overflowY": "auto", "padding": "1em"}}>
-  <Link as={NextLink} href={`/`} sx={{"width": "100%"}}>
-  <HStack sx={{"bg": isTrue((state.router.page.path === "/home") || (((state.router.page.path === "/") && "Home") === "Home")) ? `#F5EFFE` : `transparent`, "color": isTrue((state.router.page.path === "/home") || (((state.router.page.path === "/") && "Home") === "Home")) ? `#1A1060` : `black`, "borderRadius": "0.375rem", "boxShadow": "0px 0px 0px 1px rgba(84, 82, 95, 0.14)", "width": "100%", "paddingX": "1em"}}>
-  <Image src={`/github.svg`} sx={{"height": "2.5em", "padding": "0.5em"}}/>
-  <Text>
-  {`Home`}
+  <Container sx={{"padding": "1rem", "margin": "1rem", "maxWidth": "400px", "border": "1px solid #F4F3F6", "borderRadius": "0.375rem", "boxShadow": "0px 0px 0px 1px rgba(84, 82, 95, 0.14)"}}>
+  <Text className={`text-black-500 font-bold`}>
+  {`Household Income`}
 </Text>
-</HStack>
-</Link>
-  <Link as={NextLink} href={`/dashboard`} sx={{"width": "100%"}}>
-  <HStack sx={{"bg": isTrue((state.router.page.path === "/dashboard") || (((state.router.page.path === "/") && "Dashboard") === "Home")) ? `#F5EFFE` : `transparent`, "color": isTrue((state.router.page.path === "/dashboard") || (((state.router.page.path === "/") && "Dashboard") === "Home")) ? `#1A1060` : `black`, "borderRadius": "0.375rem", "boxShadow": "0px 0px 0px 1px rgba(84, 82, 95, 0.14)", "width": "100%", "paddingX": "1em"}}>
-  <Image src={`/github.svg`} sx={{"height": "2.5em", "padding": "0.5em"}}/>
-  <Text>
-  {`Dashboard`}
+  <Input placeholder={`RM`} sx={{"marginTop": "8px", "borderColor": "#eaeaef"}} type={`text`}/>
+  <Text className={`text-black-500 font-bold mt-3`}>
+  {`Monthly Income`}
 </Text>
-</HStack>
-</Link>
-  <Link as={NextLink} href={`/settings`} sx={{"width": "100%"}}>
-  <HStack sx={{"bg": isTrue((state.router.page.path === "/settings") || (((state.router.page.path === "/") && "Settings") === "Home")) ? `#F5EFFE` : `transparent`, "color": isTrue((state.router.page.path === "/settings") || (((state.router.page.path === "/") && "Settings") === "Home")) ? `#1A1060` : `black`, "borderRadius": "0.375rem", "boxShadow": "0px 0px 0px 1px rgba(84, 82, 95, 0.14)", "width": "100%", "paddingX": "1em"}}>
-  <Image src={`/github.svg`} sx={{"height": "2.5em", "padding": "0.5em"}}/>
-  <Text>
-  {`Settings`}
-</Text>
-</HStack>
-</Link>
-</VStack>
+  <Input placeholder={`RM`} sx={{"marginTop": "8px", "borderColor": "#eaeaef"}} type={`text`}/>
+  <Button className={`bg-blue-500 mt-5`} sx={{"backgroundColor": "#24A148", "textColor": "white"}}>
+  {`Generate`}
+</Button>
+</Container>
   <Spacer/>
+  <Container sx={{"padding": "1rem", "margin": "1rem", "maxWidth": "400px", "border": "1px solid #F4F3F6", "borderRadius": "0.375rem", "boxShadow": "0px 0px 0px 1px rgba(84, 82, 95, 0.14)"}}>
+  <Container sx={{"maxWidth": "250px", "margin": "2%", "border": "1px solid #F4F3F6", "borderRadius": "0.375rem", "boxShadow": "0px 0px 0px 1px rgba(84, 82, 95, 0.14)"}}>
+  <Text className={`text-black-500 font-bold`}>
+  {`Your Monthly Payment: RM3000`}
+</Text>
+</Container>
+  <Text className={`text-black-500 font-bold`}>
+  {`Loan Tenure`}
+</Text>
+  <Slider>
+  <SliderTrack>
+  <SliderFilledTrack/>
+</SliderTrack>
+  <SliderThumb/>
+</Slider>
+  <Text className={`text-black-500 font-bold`}>
+  {`Interest Rate`}
+</Text>
+  <Input placeholder={`            %`} sx={{"marginTop": "8px", "borderColor": "#eaeaef", "maxWidth": "100px"}} type={`text`}/>
+  <Select>
+  <option value={`1`}>
+  {`1`}
+</option>
+  <option value={`2`}>
+  {`2`}
+</option>
+  <option value={`3`}>
+  {`3`}
+</option>
+  <option value={`4`}>
+  {`4`}
+</option>
+</Select>
+  <Text className={`text-black-500 font-bold mt-3`}>
+  {`Monthly Income`}
+</Text>
+  <Input placeholder={`RM`} sx={{"marginTop": "8px", "borderColor": "#eaeaef"}} type={`text`}/>
+  <Button className={`bg-blue-500 mt-5`} sx={{"backgroundColor": "#24A148", "textColor": "white"}}>
+  {`Generate`}
+</Button>
+</Container>
   <HStack sx={{"width": "100%", "borderTop": "1px solid #F4F3F6", "padding": "1em"}}>
   <Spacer/>
   <Link as={NextLink} href={`https://reflex.dev/docs/getting-started/introduction/`}>

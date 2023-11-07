@@ -5,6 +5,10 @@ from pynecone.state import State
 
 import reflex as rx
 
+from typing import List
+
+options: List[str] = ["1", "2", "3", "4"]
+
 
 def sidebar_header() -> rx.Component:
     """Sidebar header.
@@ -14,9 +18,12 @@ def sidebar_header() -> rx.Component:
     """
     return rx.hstack(
         # The logo.
-        rx.image(
-            src="/icon.svg",
-            height="2em",
+        rx.text(
+            "EconoMe",
+            background_image="linear-gradient(271.68deg, #EE756A 0.75%, #756AEE 88.52%)",
+            background_clip="text",
+            font_weight="bold",
+            font_size="2em",
         ),
         rx.spacer(),
         # Link to Reflex GitHub repo.
@@ -110,40 +117,103 @@ def sidebar_item(text: str, icon: str, url: str) -> rx.Component:
     )
 
 
+
 def sidebar() -> rx.Component:
     """The sidebar.
 
     Returns:
         The sidebar component.
     """
+
     # Get all the decorated pages and add them to the sidebar.
     from reflex.page import get_decorated_pages
 
     return rx.box(
-        rx.vstack(
-            sidebar_header(),
-            rx.vstack(
-                *[
-                    sidebar_item(
-                        text=page.get("title", page["route"].strip("/").capitalize()),
-                        icon=page.get("image", "/github.svg"),
-                        url=page["route"],
-                    )
-                    for page in get_decorated_pages()
-                ],
-                width="100%",
-                overflow_y="auto",
-                align_items="flex-start",
-                padding="1em",
+    rx.vstack(
+        sidebar_header(),
+
+        rx.container(
+            rx.text("Household Income", class_name="text-black-500 font-bold"),  # Add a text element as a title
+            rx.input(
+            placeholder="RM",
+            margin_top="8px",
+            border_color="#eaeaef",
+
             ),
-            rx.spacer(),
-            sidebar_footer(),
-            height="100dvh",
+            rx.text("Monthly Income", class_name="text-black-500 font-bold mt-3"),  # Add a text element as a title
+            rx.input(
+            placeholder="RM",
+            margin_top="8px",
+            border_color="#eaeaef",
+
+            ),
+            rx.button("Generate", class_name="bg-blue-500 mt-5", background_color="#24A148", text_color="white"),  # Center align and make it green
+            padding="1rem",
+            margin="1rem",  # Add margin property here
+            max_width="400px",
+            border=styles.border,
+            border_radius=styles.border_radius,
+            box_shadow=styles.box_shadow,
+            
         ),
-        display=["none", "none", "block"],
-        min_width=styles.sidebar_width,
-        height="100%",
-        position="sticky",
-        top="0px",
-        border_right=styles.border,
-    )
+        rx.spacer(),
+        rx.container(
+
+            rx.container(
+            rx.text("Your Monthly Payment: RM3000", class_name="text-black-500 font-bold"),  # Add a text element as a title
+
+            max_width="250px",
+            margin="2%",
+            border=styles.border,
+            border_radius=styles.border_radius,
+            box_shadow=styles.box_shadow,
+            ),
+            rx.text("Loan Tenure", class_name="text-black-500 font-bold"),  # Add a text element as a title
+            rx.slider(
+           
+            ),
+        
+
+            rx.text("Interest Rate", class_name="text-black-500 font-bold"),  # Add a text element as a title
+            rx.input(
+            placeholder="            %",
+            margin_top="8px",
+            border_color="#eaeaef",
+            max_width="100px",
+            ),
+            
+            rx.select(
+                options,
+               
+            ),
+            rx.text("Monthly Income", class_name="text-black-500 font-bold mt-3"),  # Add a text element as a title
+            rx.input(
+            placeholder="RM",
+            margin_top="8px",
+            border_color="#eaeaef",
+
+            ),
+
+            
+            rx.button("Generate", class_name="bg-blue-500 mt-5", background_color="#24A148", text_color="white"),  # Center align and make it green
+            padding="1rem",
+            margin="1rem",  # Add margin property here
+            max_width="400px",
+            border=styles.border,
+            border_radius=styles.border_radius,
+            box_shadow=styles.box_shadow,
+        ),
+
+        sidebar_footer(),
+        height="100dvh",
+    ),
+    display=["none", "none", "block"],
+    min_width=styles.sidebar_width,
+    height="100%",
+    width="60%",
+    position="sticky",
+    top="0px",
+    border_right=styles.border,
+)
+
+
