@@ -38,9 +38,13 @@ export default function Component() {
     }
   }, [router])
 
-  const ref_new_item = useRef(null); refs['ref_new_item'] = ref_new_item;
-  const ref_income = useRef(null); refs['ref_income'] = ref_income;
+  const ref_sym = useRef(null); refs['ref_sym'] = ref_sym;
+  const ref_installment = useRef(null); refs['ref_installment'] = ref_installment;
+  const ref_interest = useRef(null); refs['ref_interest'] = ref_interest;
   const ref_expenses = useRef(null); refs['ref_expenses'] = ref_expenses;
+  const ref_loan = useRef(null); refs['ref_loan'] = ref_loan;
+  const ref_income = useRef(null); refs['ref_income'] = ref_income;
+  const ref_new_item = useRef(null); refs['ref_new_item'] = ref_new_item;
 
   return (
     <Fragment>
@@ -84,7 +88,7 @@ export default function Component() {
 </Link>
 </HStack>
   <VStack alignItems={`flex-start`} sx={{"width": "100%", "overflowY": "auto", "padding": "1em"}}>
-  <Box as={`form`} onSubmit={(_e0) => addEvents([Event("state.handle_submit", {form_data:{"expenses": getRefValue(ref_expenses), "income": getRefValue(ref_income)}})], (_e0), {"preventDefault": true})}>
+  <Box as={`form`} onSubmit={(_e0) => addEvents([Event("state.handle_submit", {form_data:{"installment": getRefValue(ref_installment), "loan": getRefValue(ref_loan), "expenses": getRefValue(ref_expenses), "sym": getRefValue(ref_sym), "interest": getRefValue(ref_interest), "income": getRefValue(ref_income)}})], (_e0), {"preventDefault": true})}>
   <Text className={`text-black-500 font-bold text-2xl`}>
   {`Financial Information`}
 </Text>
@@ -94,9 +98,19 @@ export default function Component() {
 </Text>
   <Input id={`income`} placeholder={`Enter Expense 1`} ref={ref_income} type={`text`}/>
   <Text className={`text-black-500 font-bold`}>
-  {`Monthly Expenses`}
+  {`Monthly Expenses (Not inclusive of loan)`}
 </Text>
   <Input id={`expenses`} placeholder={`Enter Expense 2`} ref={ref_expenses} type={`text`}/>
+  <Text className={`text-black-500 font-bold`}>
+  {`Starting Date Info`}
+</Text>
+  <Input className={`mb-1.5`} id={`sym`} placeholder={`Enter Starting Year and Month (2023/05)`} ref={ref_sym} type={`text`}/>
+  <Text className={`text-black-500 font-bold`}>
+  {`Relevant Loan Info`}
+</Text>
+  <Input className={`mb-1.5`} id={`loan`} placeholder={`Enter Loan Amount (RM)`} ref={ref_loan} type={`text`}/>
+  <Input className={`mb-1.5`} id={`interest`} placeholder={`Enter Interest Rate (%)`} ref={ref_interest} type={`text`}/>
+  <Input id={`installment`} placeholder={`Installment (Months)`} ref={ref_installment} type={`text`}/>
   <Button className={`bg-blue-500 text-black mt-3`} type={`submit`}>
   {`Submit`}
 </Button>
@@ -108,13 +122,13 @@ export default function Component() {
 </Text>
   <Container sx={{"padding": "1rem", "border": "1px solid #F4F3F6", "borderRadius": "0.375rem", "boxShadow": "0px 0px 0px 1px rgba(84, 82, 95, 0.14)"}}>
   <OrderedList>
-  {state.items.map((cznxucyv, ktwfyumr) => (
-  <ListItem key={ktwfyumr}>
+  {state.items.map((vspbpoum, lbxktygw) => (
+  <ListItem key={lbxktygw}>
   <HStack>
   <Text sx={{"fontSize": "1.25em"}}>
-  {cznxucyv}
+  {vspbpoum}
 </Text>
-  <Button onClick={(_e) => addEvents([Event("state.finish_item", {item:cznxucyv})], (_e), {})} sx={{"height": "1.5em", "backgroundColor": "white", "textColor": "white", "fontSize": "1em"}}>
+  <Button onClick={(_e) => addEvents([Event("state.finish_item", {item:vspbpoum})], (_e), {})} sx={{"height": "1.5em", "backgroundColor": "white", "textColor": "white", "fontSize": "1em"}}>
   {`❌`}
 </Button>
 </HStack>
@@ -151,7 +165,10 @@ export default function Component() {
   <Box sx={{"paddingTop": "5em", "paddingX": ["auto", "2em"]}}>
   <Box sx={{"width": "100%", "alignItems": "flex-start", "boxShadow": "0px 0px 0px 1px rgba(84, 82, 95, 0.14)", "borderRadius": "0.375rem", "padding": "1em", "marginBottom": "2em"}}>
   <Container>
-  <Plot data={[{"fill": "tozeroy", "mode": "lines", "name": "Line 1", "x": [1, 2, 3, 4, 5], "y": [2, 4, 1, 7, 4], "type": "scatter"}, {"fill": "tozeroy", "mode": "lines", "name": "Line 2", "x": [1, 2, 3, 4, 5], "y": [1, 3, 2, 5, 6], "type": "scatter"}]} height={`400px`}/>
+  <Plot data={state.figure_plt}/>
+  <Text>
+  {state.figure_loading}
+</Text>
 </Container>
 </Box>
 </Box>

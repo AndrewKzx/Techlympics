@@ -5,7 +5,7 @@ from pynecone.state import State
 
 import reflex as rx
 
-#Ignore
+
 def sidebar_header() -> rx.Component:
     """Sidebar header.
 
@@ -44,7 +44,9 @@ def sidebar_header() -> rx.Component:
         padding="1em",
     )
 
-#Ignore
+# Ignore
+
+
 def sidebar_footer() -> rx.Component:
     """Sidebar footer.
 
@@ -66,31 +68,54 @@ def sidebar_footer() -> rx.Component:
         padding="1em",
     )
 
-#Focus on this form Jian
+# Focus on this form Jian
+
+
 def form_1() -> rx.Component:
     return rx.form(
-        rx.text("Financial Information", class_name="text-black-500 font-bold text-2xl"),
+        rx.text("Financial Information",
+                class_name="text-black-500 font-bold text-2xl"),
         rx.container(
+            # User input for Income
             rx.text("Household Income", class_name="text-black-500 font-bold"),
-            #User input for Income
-            rx.input(placeholder="Enter Expense 1", id="income"),
-            rx.text("Monthly Expenses", class_name="text-black-500 font-bold"),
-            #User input for Expenses
+            rx.input(placeholder="Enter Expense 1", id="income",
+                     #  on_change=State.handle_change
+                     ),
+
+            # User input for Expenses
+            rx.text("Monthly Expenses (Not inclusive of loan)",
+                    class_name="text-black-500 font-bold"),
             rx.input(placeholder="Enter Expense 2", id="expenses"),
-            rx.button("Submit", class_name="bg-blue-500 text-black mt-3", type_="submit"),
+
+            # User input for Starting Date info
+            rx.text("Starting Date Info",
+                    class_name="text-black-500 font-bold"),
+            rx.input(
+                placeholder="Enter Starting Year and Month (2023/05)", id="sym", class_name="mb-1.5"),
+
+            # User input for Loan Info
+            rx.text("Relevant Loan Info",
+                    class_name="text-black-500 font-bold"),
+            rx.input(placeholder="Enter Loan Amount (RM)",
+                     id="loan", class_name="mb-1.5"),
+            rx.input(placeholder="Enter Interest Rate (%)",
+                     id="interest", class_name="mb-1.5"),
+            rx.input(placeholder="Installment (Months)", id="installment"),
+
+            rx.button(
+                "Submit", class_name="bg-blue-500 text-black mt-3", type_="submit"),
             padding="1rem",
             max_width="400px",
             border=styles.border,
             border_radius=styles.border_radius,
             box_shadow=styles.box_shadow,
-
-            
         ),
-        #When user click submit, this is sent to state.py/handle_submit function
+
+        # When user click submit, this is sent to state.py/handle_submit function
         on_submit=State.handle_submit,
     )
 
-#Ignore this shit
+# Ignore this shit
 
 # def display_submitted_data() -> rx.Component:
 #     return rx.container(
@@ -100,7 +125,7 @@ def form_1() -> rx.Component:
 #     )
 
 
-#Can ignore this shit
+# Can ignore this shit
 def sidebar_item(text: str, icon: str, url: str) -> rx.Component:
     """Sidebar item.
 
@@ -146,7 +171,9 @@ def sidebar_item(text: str, icon: str, url: str) -> rx.Component:
         width="100%",
     )
 
-#Mechanism to add new item into the form
+# Mechanism to add new item into the form
+
+
 def new_item() -> rx.Component:
     """Render the new item form.
 
@@ -165,12 +192,15 @@ def new_item() -> rx.Component:
         ),
         # Clicking the button will also submit the form.
         rx.center(
-            rx.button("Add", type_="submit", bg="green", color="white", margin_top="1rem"),
+            rx.button("Add", type_="submit", bg="green",
+                      color="white", margin_top="1rem"),
         ),
         on_submit=State.add_item,
     )
 
-#Major Expenses section 
+# Major Expenses section
+
+
 def todo_item(item: rx.Var[str]) -> rx.Component:
     """Render an item in the todo list.
 
@@ -195,11 +225,13 @@ def todo_item(item: rx.Var[str]) -> rx.Component:
                 font_size="1em",  # Adjust the font size as needed
             ),
             # The item text.
-            
+
         )
     )
 
-#To do list to render the items from the to do 
+# To do list to render the items from the to do
+
+
 def todo_list() -> rx.Component:
     """Render the todo list.
 
@@ -213,9 +245,9 @@ def todo_list() -> rx.Component:
     )
 
 
-#The main place to adjust the design and add components 
-#components used:
-#sidebar_header, form_1, todo_list, new_item, sidebar_footer
+# The main place to adjust the design and add components
+# components used:
+# sidebar_header, form_1, todo_list, new_item, sidebar_footer
 def sidebar() -> rx.Component:
     """The sidebar.
 
@@ -230,20 +262,21 @@ def sidebar() -> rx.Component:
             sidebar_header(),
             rx.vstack(
 
-                #Form 1 is called here as a component to put into the side bar
+                # Form 1 is called here as a component to put into the side bar
                 form_1(),
                 rx.spacer(),
-                rx.text("Major Expenses", class_name="text-black-500 font-bold text-2xl"),
+                rx.text("Major Expenses",
+                        class_name="text-black-500 font-bold text-2xl"),
 
                 rx.container(
 
-                todo_list(),
-                new_item(),
+                    todo_list(),
+                    new_item(),
 
-                padding="1rem",
-                border=styles.border,
-                border_radius=styles.border_radius,
-                box_shadow=styles.box_shadow,
+                    padding="1rem",
+                    border=styles.border,
+                    border_radius=styles.border_radius,
+                    box_shadow=styles.box_shadow,
                 ),
                 rx.divider(),
 
@@ -263,6 +296,3 @@ def sidebar() -> rx.Component:
         top="0px",
         border_right=styles.border,
     )
-
-  
-
