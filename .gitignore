@@ -1,5 +1,11 @@
 *.db
+
 *.py[cod]
+
 .web
+
 .web/
+.web/*
+.web/package.json
+
 __pycache__/
