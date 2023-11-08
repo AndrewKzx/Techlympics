@@ -108,13 +108,13 @@ export default function Component() {
 </Text>
   <Container sx={{"padding": "1rem", "border": "1px solid #F4F3F6", "borderRadius": "0.375rem", "boxShadow": "0px 0px 0px 1px rgba(84, 82, 95, 0.14)"}}>
   <OrderedList>
-  {state.items.map((lltbgxqh, i) => (
+  {state.items.map((kzoksvsf, i) => (
   <ListItem key={i}>
   <HStack>
   <Text sx={{"fontSize": "1.25em"}}>
-  {lltbgxqh}
+  {kzoksvsf}
 </Text>
-  <Button onClick={(_e) => addEvents([Event("state.finish_item", {item:lltbgxqh})], (_e))} sx={{"height": "1.5em", "backgroundColor": "white", "textColor": "white", "fontSize": "1em"}}>
+  <Button onClick={(_e) => addEvents([Event("state.finish_item", {item:kzoksvsf})], (_e))} sx={{"height": "1.5em", "backgroundColor": "white", "textColor": "white", "fontSize": "1em"}}>
   {`❌`}
 </Button>
 </HStack>

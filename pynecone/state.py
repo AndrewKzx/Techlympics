@@ -18,6 +18,7 @@ class State(rx.State):
     # whether an item entered is valid
     invalid_item: bool = False
 
+    #Initialized the form's submitted data into a dictionary
     submitted_data: dict = {}
 
 
@@ -48,8 +49,11 @@ class State(rx.State):
         """
         self.items.pop(self.items.index(item))
 
+    #Handle submit function to handle the data of the user input, it is put into this 
     def handle_submit(self, form_data: dict):
         self.submitted_data = form_data
+        #this will be printed to the terminal
+        #test: {'expenses': 'ass', 'income': 'ass'}
         print(form_data)
 
     pass

@@ -171,8 +171,7 @@ export const applyEvent = async (event, socket) => {
     const a = document.createElement('a');
     a.hidden = true;
     a.href = event.payload.url;
-    if (event.payload.filename)
-      a.download = event.payload.filename;
+    a.download = event.payload.filename;
     a.click();
     a.remove();
     return false;
@@ -201,11 +200,7 @@ export const applyEvent = async (event, socket) => {
     try {
       const eval_result = eval(event.payload.javascript_code);
       if (event.payload.callback) {
-        if (!!eval_result && typeof eval_result.then === 'function') {
-          eval(event.payload.callback)(await eval_result)
-        } else {
-          eval(event.payload.callback)(eval_result)
-        }
+        eval(event.payload.callback)(eval_result)
       }
     } catch (e) {
       console.log("_call_script", e);
@@ -491,13 +486,8 @@ export const useEventLoop = (
   const [connectError, setConnectError] = useState(null)
 
   // Function to add new events to the event queue.
-  const addEvents = (events, _e, event_actions) => {
-    if (event_actions?.preventDefault && _e?.preventDefault) {
-      _e.preventDefault();
-    }
-    if (event_actions?.stopPropagation && _e?.stopPropagation) {
-      _e.stopPropagation();
-    }
+  const addEvents = (events, _e) => {
+    preventDefault(_e);
     queueEvents(events, socket)
   }
 
@@ -540,6 +530,16 @@ export const useEventLoop = (
  */
 export const isTrue = (val) => {
   return Array.isArray(val) ? val.length > 0 : !!val;
+};
+
+/**
+ * Prevent the default event for form submission.
+ * @param event
+ */
+export const preventDefault = (event) => {
+  if (event && event.type == "submit") {
+    event.preventDefault();
+  }
 };
 
 /**

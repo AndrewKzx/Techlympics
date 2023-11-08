@@ -66,13 +66,16 @@ def sidebar_footer() -> rx.Component:
         padding="1em",
     )
 
+#Focus on this form Jian
 def form_1() -> rx.Component:
     return rx.form(
         rx.text("Financial Information", class_name="text-black-500 font-bold text-2xl"),
         rx.container(
             rx.text("Household Income", class_name="text-black-500 font-bold"),
+            #User input for Income
             rx.input(placeholder="Enter Expense 1", id="income"),
             rx.text("Monthly Expenses", class_name="text-black-500 font-bold"),
+            #User input for Expenses
             rx.input(placeholder="Enter Expense 2", id="expenses"),
             rx.button("Submit", class_name="bg-blue-500 text-black mt-3", type_="submit"),
             padding="1rem",
@@ -83,14 +86,18 @@ def form_1() -> rx.Component:
 
             
         ),
+        #When user click submit, this is sent to state.py/handle_submit function
         on_submit=State.handle_submit,
     )
-def display_submitted_data() -> rx.Component:
-    return rx.container(
-        rx.text("Submitted Data", class_name="text-black-500 font-bold text-2xl"),
-        rx.text("Household Income: " + State.submitted_data.get("income")),
-        rx.text("Monthly Expenses: " + State.submitted_data.get("expenses")),
-    )
+
+#Ignore this shit
+
+# def display_submitted_data() -> rx.Component:
+#     return rx.container(
+#         rx.text("Submitted Data", class_name="text-black-500 font-bold text-2xl"),
+#         rx.text("Household Income: " + State.submitted_data.get("income")),
+#         rx.text("Monthly Expenses: " + State.submitted_data.get("expenses")),
+#     )
 
 
 #Can ignore this shit
@@ -222,8 +229,9 @@ def sidebar() -> rx.Component:
         rx.vstack(
             sidebar_header(),
             rx.vstack(
+
+                #Form 1 is called here as a component to put into the side bar
                 form_1(),
-                # display_submitted_data(),
                 rx.spacer(),
                 rx.text("Major Expenses", class_name="text-black-500 font-bold text-2xl"),
 
