@@ -50,7 +50,7 @@ class State(rx.State):
 
     def add_item(self, form_data: dict[str, str]):
         # Add the new item to the list.
-        new_item = f"{form_data['name']} - " + f"Date: form_data['sym']" + f" Value:{form_data['loan']}" + \
+        new_item = f"{form_data['name']} - " + f"Date: {form_data['sym']}" + f" Value:{form_data['loan']}" + \
             f" Interest:{form_data['interest']}" + \
             f" Installment:{form_data['installment']}"
 
@@ -70,9 +70,6 @@ class State(rx.State):
         index = self.show_loans.index(item)
         self.show_loans.pop(index)
         self.loans_from_user.pop(index)
-
-        print(self.loans_from_user)
-        print(self.show_loans)
 
     # Handle submit function to handle the data of the user input, it is put into this
     def handle_submit(self, form_data: dict):
@@ -106,7 +103,6 @@ class State(rx.State):
     def create_figure_one(self, household_income, data_of_loans, monthly_expenses, months, predicted_inflation) -> go.Figure:
 
         real_full_expenses = [monthly_expenses for i in range(len(months))]
-        print(data_of_loans)
 
         # From the required starting loan date to final loan end date, add all loans to full_expenses
         for loan_focused in data_of_loans:
@@ -176,7 +172,6 @@ class State(rx.State):
                 # Update Offset_Cumulative
                 offset_cumulative[
                     offset + j] += loan_focused["real_monthly_payment"][j]
-            print(cumulative_payment)
 
             tracers.append(
                 go.Scatter(x=months, y=cumulative_payment, mode='lines',
@@ -268,7 +263,7 @@ class State(rx.State):
         model_sy = lowest_start_year
         model_sm = lowest_start_month
 
-        # model's minimum start date: 2023, 8
+        # NOTICE: model's maximum / highest start date: 2023, 8 (Constraints of LSTM model)
         if (lowest_start_year > 2023):
             # bigger than 2023 (constant 5 for from August 2023)
             model_sy = 2023
@@ -294,9 +289,6 @@ class State(rx.State):
         # now only predicted inflation from required loan start date till the end of all loans
         predicted_inflation = predicted_inflation[offset:]
 
-        # print(model_sy, model_sm)
-        # print(lowest_start_year, lowest_start_month)
-
         months = []
         copy_lsy = lowest_start_year
         for i in range(lowest_start_month, lowest_start_month+len(predicted_inflation)):
@@ -307,17 +299,10 @@ class State(rx.State):
                 months.append(f"{copy_lsy}/12")
                 copy_lsy += 1
 
-        # print(predicted_inflation)
-        # print(len(predicted_inflation))
-        # print(months)
-        # print(len(months))
-
         # Calculate Real Loan Data
         for i in range(len(data_of_loans)):
             self.calculate_real_loan(
                 data_of_loans[i], predicted_inflation, months, lowest_start_year, lowest_start_month)
-
-        # print(data_of_loans)
 
         # ===== Figure Drawing =====
         # Income vs Loan
@@ -328,24 +313,6 @@ class State(rx.State):
         self.figure_plt_2 = self.create_figure_two(
             data_of_loans, monthly_expenses, months
         )
-
-
-# real_income = [household_income]
-# real_full_expenses = [monthly_expenses + real_debt_cost[0]]
-
-# real_basic_neccesity = [monthly_expenses]
-# real_stacked_debt1 = [real_loan_cost_montly + monthly_expenses]
-
-# for m in range(1, len(predicted_inflation)):
-#     real_income.append(
-#         real_income[m - 1] * (1 - predicted_inflation[m] / 100)
-#     )
-#     real_debt_cost.append(
-#         real_debt_cost[m - 1] * (1 - predicted_inflation[m] / 100)
-#     )
-#     real_full_expenses.append(monthly_expenses + real_debt_cost[-1])
-#     real_basic_neccesity.append(monthly_expenses)
-#     real_stacked_debt1.append(real_debt_cost[-1] + monthly_expenses)
 
 # ===== Model Code =====
 
