@@ -28,8 +28,8 @@ class State(rx.State):
 
         layout=go.Layout(
             title='Financial Report',
-            minreducedheight=800,
-            minreducedwidth=800,
+            height=800,
+            width=800,
         )
     )
 
@@ -38,8 +38,8 @@ class State(rx.State):
 
         layout=go.Layout(
             title='Financial Report',
-            minreducedheight=800,
-            minreducedwidth=800,
+            height=800,
+            width=800,
         )
     )
 
@@ -144,8 +144,8 @@ class State(rx.State):
                     dtick=1
                 ),
                 yaxis=dict(range=[0, 20000], dtick=1000),
-                minreducedheight=800,
-                minreducedwidth=800,
+                height=800,
+                width=800,
             )
         )
 
@@ -194,8 +194,8 @@ class State(rx.State):
                     dtick=1
                 ),
                 yaxis=dict(range=[0, 20000], dtick=1000),
-                minreducedheight=800,
-                minreducedwidth=800,
+                height=800,
+                width=800,
             )
         )
 
