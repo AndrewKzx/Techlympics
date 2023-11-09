@@ -11,8 +11,10 @@ import reflex as rx
 def index() -> rx.Component:
 
     return rx.container(
-        rx.plotly(data=State.figure_plt),
-        rx.text(
-            State.figure_loading
-        )
+
+        rx.plotly(data=State.figure_plt_1),
+        rx.text("Real Monthly Income vs Real Monthly Expenses"),
+
+        rx.plotly(data=State.figure_plt_2),
+        rx.text("Breakdown of Real Monthly Expenses (Stacked)"),
     )

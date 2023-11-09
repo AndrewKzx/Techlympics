@@ -38,13 +38,13 @@ export default function Component() {
     }
   }, [router])
 
-  const ref_sym = useRef(null); refs['ref_sym'] = ref_sym;
   const ref_installment = useRef(null); refs['ref_installment'] = ref_installment;
-  const ref_interest = useRef(null); refs['ref_interest'] = ref_interest;
-  const ref_expenses = useRef(null); refs['ref_expenses'] = ref_expenses;
-  const ref_loan = useRef(null); refs['ref_loan'] = ref_loan;
   const ref_income = useRef(null); refs['ref_income'] = ref_income;
-  const ref_new_item = useRef(null); refs['ref_new_item'] = ref_new_item;
+  const ref_name = useRef(null); refs['ref_name'] = ref_name;
+  const ref_interest = useRef(null); refs['ref_interest'] = ref_interest;
+  const ref_loan = useRef(null); refs['ref_loan'] = ref_loan;
+  const ref_expenses = useRef(null); refs['ref_expenses'] = ref_expenses;
+  const ref_sym = useRef(null); refs['ref_sym'] = ref_sym;
 
   return (
     <Fragment>
@@ -81,26 +81,32 @@ export default function Component() {
   {`EconoMe`}
 </Text>
   <Spacer/>
-  <Link as={NextLink} href={`https://github.com/reflex-dev/reflex`}>
+  <Link as={NextLink} href={`https://github.com/AndrewKzx/Techlympics`}>
   <Center sx={{"boxShadow": "0px 0px 0px 1px rgba(84, 82, 95, 0.14)", "bg": "transparent", "borderRadius": "0.375rem", "_hover": {"bg": "#F5EFFE"}}}>
   <Image src={`/github.svg`} sx={{"height": "3em", "padding": "0.5em"}}/>
 </Center>
 </Link>
 </HStack>
-  <VStack alignItems={`flex-start`} sx={{"width": "100%", "overflowY": "auto", "padding": "1em"}}>
-  <Box as={`form`} onSubmit={(_e0) => addEvents([Event("state.handle_submit", {form_data:{"installment": getRefValue(ref_installment), "loan": getRefValue(ref_loan), "expenses": getRefValue(ref_expenses), "sym": getRefValue(ref_sym), "interest": getRefValue(ref_interest), "income": getRefValue(ref_income)}})], (_e0), {"preventDefault": true})}>
+  <VStack alignItems={`flex-start`} sx={{"width": "80%", "overflowY": "auto", "padding": "1em"}}>
   <Text className={`text-black-500 font-bold text-2xl`}>
-  {`Financial Information`}
+  {`Loan Information`}
 </Text>
-  <Container sx={{"padding": "1rem", "maxWidth": "400px", "border": "1px solid #F4F3F6", "borderRadius": "0.375rem", "boxShadow": "0px 0px 0px 1px rgba(84, 82, 95, 0.14)"}}>
-  <Text className={`text-black-500 font-bold`}>
-  {`Household Income`}
+  <Container sx={{"padding": "1rem", "border": "1px solid #F4F3F6", "borderRadius": "0.375rem", "boxShadow": "0px 0px 0px 1px rgba(84, 82, 95, 0.14)"}}>
+  <OrderedList>
+  {state.show_loans.map((ipgujbua, kthpfmzz) => (
+  <ListItem key={kthpfmzz}>
+  <HStack>
+  <Text sx={{"fontSize": "1.25em"}}>
+  {ipgujbua}
 </Text>
-  <Input id={`income`} placeholder={`Enter Expense 1`} ref={ref_income} type={`text`}/>
-  <Text className={`text-black-500 font-bold`}>
-  {`Monthly Expenses (Not inclusive of loan)`}
-</Text>
-  <Input id={`expenses`} placeholder={`Enter Expense 2`} ref={ref_expenses} type={`text`}/>
+  <Button onClick={(_e) => addEvents([Event("state.finish_item", {item:ipgujbua})], (_e), {})} sx={{"height": "1.5em", "backgroundColor": "white", "textColor": "white", "fontSize": "1em"}}>
+  {`❌`}
+</Button>
+</HStack>
+</ListItem>
+))}
+</OrderedList>
+  <Box as={`form`} onSubmit={(_e0) => addEvents([Event("state.add_item", {form_data:{"installment": getRefValue(ref_installment), "sym": getRefValue(ref_sym), "name": getRefValue(ref_name), "loan": getRefValue(ref_loan), "interest": getRefValue(ref_interest)}})], (_e0), {"preventDefault": true})}>
   <Text className={`text-black-500 font-bold`}>
   {`Starting Date Info`}
 </Text>
@@ -108,35 +114,10 @@ export default function Component() {
   <Text className={`text-black-500 font-bold`}>
   {`Relevant Loan Info`}
 </Text>
+  <Input className={`mb-1.5`} id={`name`} placeholder={`Enter Loan Name`} ref={ref_name} type={`text`}/>
   <Input className={`mb-1.5`} id={`loan`} placeholder={`Enter Loan Amount (RM)`} ref={ref_loan} type={`text`}/>
   <Input className={`mb-1.5`} id={`interest`} placeholder={`Enter Interest Rate (%)`} ref={ref_interest} type={`text`}/>
   <Input id={`installment`} placeholder={`Installment (Months)`} ref={ref_installment} type={`text`}/>
-  <Button className={`bg-blue-500 text-black mt-3`} type={`submit`}>
-  {`Submit`}
-</Button>
-</Container>
-</Box>
-  <Spacer/>
-  <Text className={`text-black-500 font-bold text-2xl`}>
-  {`Major Expenses`}
-</Text>
-  <Container sx={{"padding": "1rem", "border": "1px solid #F4F3F6", "borderRadius": "0.375rem", "boxShadow": "0px 0px 0px 1px rgba(84, 82, 95, 0.14)"}}>
-  <OrderedList>
-  {state.items.map((vspbpoum, lbxktygw) => (
-  <ListItem key={lbxktygw}>
-  <HStack>
-  <Text sx={{"fontSize": "1.25em"}}>
-  {vspbpoum}
-</Text>
-  <Button onClick={(_e) => addEvents([Event("state.finish_item", {item:vspbpoum})], (_e), {})} sx={{"height": "1.5em", "backgroundColor": "white", "textColor": "white", "fontSize": "1em"}}>
-  {`❌`}
-</Button>
-</HStack>
-</ListItem>
-))}
-</OrderedList>
-  <Box as={`form`} onSubmit={(_e0) => addEvents([Event("state.add_item", {form_data:{"new_item": getRefValue(ref_new_item)}})], (_e0), {"preventDefault": true})}>
-  <Input id={`new_item`} isInvalid={state.invalid_item} placeholder={`Add an expense...`} ref={ref_new_item} sx={{"bg": "white"}} type={`text`}/>
   <Center>
   <Button sx={{"bg": "green", "color": "white", "marginTop": "1rem"}} type={`submit`}>
   {`Add`}
@@ -144,6 +125,25 @@ export default function Component() {
 </Center>
 </Box>
 </Container>
+  <Box as={`form`} onSubmit={(_e0) => addEvents([Event("state.handle_submit", {form_data:{"expenses": getRefValue(ref_expenses), "income": getRefValue(ref_income)}})], (_e0), {"preventDefault": true})}>
+  <Text className={`text-black-500 font-bold text-2xl`}>
+  {`Financial Information`}
+</Text>
+  <Container sx={{"padding": "1rem", "maxWidth": "400px", "border": "1px solid #F4F3F6", "borderRadius": "0.375rem", "boxShadow": "0px 0px 0px 1px rgba(84, 82, 95, 0.14)"}}>
+  <Text className={`text-black-500 font-bold`}>
+  {`Household Income`}
+</Text>
+  <Input id={`income`} placeholder={`Enter Current Household Income`} ref={ref_income} type={`text`}/>
+  <Text className={`text-black-500 font-bold`}>
+  {`Monthly Expenses (Not inclusive of loan(s))`}
+</Text>
+  <Input id={`expenses`} placeholder={`Enter Usual Monthly Expenses`} ref={ref_expenses} type={`text`}/>
+  <Button className={`bg-blue-500 text-black mt-3`} type={`submit`}>
+  {`Submit`}
+</Button>
+</Container>
+</Box>
+  <Spacer/>
   <Divider/>
 </VStack>
   <Spacer/>
@@ -165,9 +165,13 @@ export default function Component() {
   <Box sx={{"paddingTop": "5em", "paddingX": ["auto", "2em"]}}>
   <Box sx={{"width": "100%", "alignItems": "flex-start", "boxShadow": "0px 0px 0px 1px rgba(84, 82, 95, 0.14)", "borderRadius": "0.375rem", "padding": "1em", "marginBottom": "2em"}}>
   <Container>
-  <Plot data={state.figure_plt}/>
+  <Plot data={state.figure_plt_1}/>
   <Text>
-  {state.figure_loading}
+  {`Real Monthly Income vs Real Monthly Expenses`}
+</Text>
+  <Plot data={state.figure_plt_2}/>
+  <Text>
+  {`Breakdown of Real Monthly Expenses (Stacked)`}
 </Text>
 </Container>
 </Box>

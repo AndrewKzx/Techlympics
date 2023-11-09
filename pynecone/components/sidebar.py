@@ -7,11 +7,6 @@ import reflex as rx
 
 
 def sidebar_header() -> rx.Component:
-    """Sidebar header.
-
-    Returns:
-        The sidebar header component.
-    """
     return rx.hstack(
         # The logo.
         rx.text(
@@ -22,7 +17,6 @@ def sidebar_header() -> rx.Component:
             font_size="2em",
         ),
         rx.spacer(),
-        # Link to Reflex GitHub repo.
         rx.link(
             rx.center(
                 rx.image(
@@ -46,11 +40,6 @@ def sidebar_header() -> rx.Component:
 
 
 def sidebar_footer() -> rx.Component:
-    """Sidebar footer.
-
-    Returns:
-        The sidebar footer component.
-    """
     return rx.hstack(
         rx.spacer(),
         rx.link(
@@ -66,39 +55,22 @@ def sidebar_footer() -> rx.Component:
         padding="1em",
     )
 
-# Focus on this form Jian
 
-
-def form_1() -> rx.Component:
+def final_form() -> rx.Component:
     return rx.form(
         rx.text("Financial Information",
                 class_name="text-black-500 font-bold text-2xl"),
         rx.container(
             # User input for Income
             rx.text("Household Income", class_name="text-black-500 font-bold"),
-            rx.input(placeholder="Enter Expense 1", id="income",
+            rx.input(placeholder="Enter Current Household Income", id="income",
                      #  on_change=State.handle_change
                      ),
 
             # User input for Expenses
-            rx.text("Monthly Expenses (Not inclusive of loan)",
+            rx.text("Monthly Expenses (Not inclusive of loan(s))",
                     class_name="text-black-500 font-bold"),
-            rx.input(placeholder="Enter Expense 2", id="expenses"),
-
-            # User input for Starting Date info
-            rx.text("Starting Date Info",
-                    class_name="text-black-500 font-bold"),
-            rx.input(
-                placeholder="Enter Starting Year and Month (2023/05)", id="sym", class_name="mb-1.5"),
-
-            # User input for Loan Info
-            rx.text("Relevant Loan Info",
-                    class_name="text-black-500 font-bold"),
-            rx.input(placeholder="Enter Loan Amount (RM)",
-                     id="loan", class_name="mb-1.5"),
-            rx.input(placeholder="Enter Interest Rate (%)",
-                     id="interest", class_name="mb-1.5"),
-            rx.input(placeholder="Installment (Months)", id="installment"),
+            rx.input(placeholder="Enter Usual Monthly Expenses", id="expenses"),
 
             rx.button(
                 "Submit", class_name="bg-blue-500 text-black mt-3", type_="submit"),
@@ -113,28 +85,8 @@ def form_1() -> rx.Component:
         on_submit=State.handle_submit,
     )
 
-# Ignore this shit
 
-# def display_submitted_data() -> rx.Component:
-#     return rx.container(
-#         rx.text("Submitted Data", class_name="text-black-500 font-bold text-2xl"),
-#         rx.text("Household Income: " + State.submitted_data.get("income")),
-#         rx.text("Monthly Expenses: " + State.submitted_data.get("expenses")),
-#     )
-
-
-# Can ignore this shit
 def sidebar_item(text: str, icon: str, url: str) -> rx.Component:
-    """Sidebar item.
-
-    Args:
-        text: The text of the item.
-        icon: The icon of the item.
-        url: The URL of the item.
-
-    Returns:
-        rx.Component: The sidebar item component.
-    """
     # Whether the item is active.
     active = (State.router.page.path == f"/{text.lower()}") | (
         (State.router.page.path == "/") & text == "Home"
@@ -172,7 +124,7 @@ def sidebar_item(text: str, icon: str, url: str) -> rx.Component:
 # Mechanism to add new item into the form
 
 
-def new_item() -> rx.Component:
+def new_loan() -> rx.Component:
     """Render the new item form.
 
     See: https://reflex.dev/docs/library/forms/form
@@ -181,13 +133,23 @@ def new_item() -> rx.Component:
         A form to add a new item to the todo list.
     """
     return rx.form(
-        # Pressing enter will submit the form.
+        # User input for Starting Date info
+        rx.text("Starting Date Info",
+                class_name="text-black-500 font-bold"),
         rx.input(
-            id="new_item",
-            placeholder="Add an expense...",
-            bg="white",
-            is_invalid=State.invalid_item,
-        ),
+            placeholder="Enter Starting Year and Month (2023/05)", id="sym", class_name="mb-1.5"),
+
+        # User input for Loan Info
+        rx.text("Relevant Loan Info",
+                class_name="text-black-500 font-bold"),
+        rx.input(placeholder="Enter Loan Name",
+                 id="name", class_name="mb-1.5"),
+        rx.input(placeholder="Enter Loan Amount (RM)",
+                 id="loan", class_name="mb-1.5"),
+        rx.input(placeholder="Enter Interest Rate (%)",
+                 id="interest", class_name="mb-1.5"),
+        rx.input(placeholder="Installment (Months)", id="installment"),
+
         # Clicking the button will also submit the form.
         rx.center(
             rx.button("Add", type_="submit", bg="green",
@@ -199,7 +161,7 @@ def new_item() -> rx.Component:
 # Major Expenses section
 
 
-def todo_item(item: rx.Var[str]) -> rx.Component:
+def todo_loan(item: rx.Var[str]) -> rx.Component:
     """Render an item in the todo list.
 
     NOTE: When using `rx.foreach`, the item will be a Var[str] rather than a str.
@@ -223,29 +185,22 @@ def todo_item(item: rx.Var[str]) -> rx.Component:
                 font_size="1em",  # Adjust the font size as needed
             ),
             # The item text.
-
         )
     )
 
 # To do list to render the items from the to do
 
 
-def todo_list() -> rx.Component:
-    """Render the todo list.
-
-    Returns:
-        The rendered todo list.
-    """
+def loans_list() -> rx.Component:
     return rx.ordered_list(
-        # rx.foreach is necessary to iterate over state vars.
-        # see: https://reflex.dev/docs/library/layout/foreach
-        rx.foreach(State.items, lambda item: todo_item(item)),
+        rx.foreach(State.show_loans, lambda loan: todo_loan(loan)),
     )
-
 
 # The main place to adjust the design and add components
 # components used:
-# sidebar_header, form_1, todo_list, new_item, sidebar_footer
+# sidebar_header, final_form, loans_list, new_loan, sidebar_footer
+
+
 def sidebar() -> rx.Component:
     """The sidebar.
 
@@ -259,26 +214,25 @@ def sidebar() -> rx.Component:
         rx.vstack(
             sidebar_header(),
             rx.vstack(
-
-                # Form 1 is called here as a component to put into the side bar
-                form_1(),
-                rx.spacer(),
-                rx.text("Major Expenses",
+                rx.text("Loan Information",
                         class_name="text-black-500 font-bold text-2xl"),
-
                 rx.container(
 
-                    todo_list(),
-                    new_item(),
+                    loans_list(),
+                    new_loan(),
 
                     padding="1rem",
                     border=styles.border,
                     border_radius=styles.border_radius,
                     box_shadow=styles.box_shadow,
                 ),
+
+                # Form 1 is called here as a component to put into the side bar
+                final_form(),
+                rx.spacer(),
                 rx.divider(),
 
-                width="100%",
+                width="80%",
                 overflow_y="auto",
                 align_items="flex-start",
                 padding="1em",

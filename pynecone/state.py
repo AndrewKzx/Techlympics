@@ -1,5 +1,6 @@
 """Base state for the app."""
 
+from datetime import datetime
 import reflex as rx
 import plotly.express as px
 import plotly.graph_objects as go
@@ -15,16 +16,24 @@ class State(rx.State):
 
     # ===== State Fields =====
     # The current items in the todo list.
-    items = ["Write Code", "Sleep", "Have Fun"]
+    loans_from_user = []
+    show_loans = []
 
     # The new item to add to the todo list.
     new_item: str
 
-    # whether an item entered is valid
-    invalid_item: bool = False
-
     # ===== Figure Data =====
-    figure_plt: go.Figure = go.Figure(
+    figure_plt_1: go.Figure = go.Figure(
+        data=[],
+
+        layout=go.Layout(
+            title='Financial Report',
+            minreducedheight=800,
+            minreducedwidth=800,
+        )
+    )
+
+    figure_plt_2: go.Figure = go.Figure(
         data=[],
 
         layout=go.Layout(
@@ -40,26 +49,30 @@ class State(rx.State):
     # ===== State Fields =====
 
     def add_item(self, form_data: dict[str, str]):
-        """Add a new item to the todo list.
-
-        Args:
-            form_data: The data from the form.
-        """
         # Add the new item to the list.
-        new_item = form_data.pop("new_item")
-        if not new_item:
-            self.invalid_item = True
-            return
+        new_item = f"{form_data['name']} - " + f"Date: form_data['sym']" + f" Value:{form_data['loan']}" + \
+            f" Interest:{form_data['interest']}" + \
+            f" Installment:{form_data['installment']}"
 
-        self.items.append(new_item)
-        # set the invalid status to False.
-        self.invalid_item = False
+        self.show_loans.append(new_item)
+        self.loans_from_user.append(form_data)
 
         # Clear the value of the input.
-        return rx.set_value("new_item", "")
+        return [
+            rx.set_value("sym", ""),
+            rx.set_value("name", ""),
+            rx.set_value("loan", ""),
+            rx.set_value("interest", ""),
+            rx.set_value("installment", "")
+        ]
 
     def finish_item(self, item: str):
-        self.items.pop(self.items.index(item))
+        index = self.show_loans.index(item)
+        self.show_loans.pop(index)
+        self.loans_from_user.pop(index)
+
+        print(self.loans_from_user)
+        print(self.show_loans)
 
     # Handle submit function to handle the data of the user input, it is put into this
     def handle_submit(self, form_data: dict):
@@ -72,87 +85,56 @@ class State(rx.State):
                 self.figure_loading = "Ready for input"
                 print("At least one of the values is empty")
                 return
-
-        # Change figure
-        self.run_figure(form_data)
-
-    # ===== Figure related =====
-    def run_figure(self, form_data: dict) -> go.Figure:
-        start_year, start_month = form_data["sym"].split("/")
-        start_year, start_month = int(start_year), int(start_month)
+        if not self.loans_from_user:
+            self.figure_loading = "Ready for input"
+            print("No Loans")
+            return
 
         household_income = int(form_data["income"])
         monthly_expenses = int(form_data["expenses"])
 
-        loan_amt = int(form_data["loan"])
-        loan_interest = 1.0 + (int(form_data["interest"]) / 100)
-        installment_months = int(form_data["installment"])
-        real_loan_cost_montly = (
-            loan_amt * loan_interest
-        ) / installment_months
+        # Change figures
+        self.create_figures(household_income, monthly_expenses)
 
-        # Get end of year and month
-        end_year = start_year + (start_month + installment_months - 1) // 12
-        end_month = (start_month + installment_months - 1) % 12 + 1
+        # Clear the value of the input.
+        return [
+            rx.set_value("income", ""),
+            rx.set_value("expenses", ""),
+        ]
 
-        offset_months = 0
+    # ===== Figure related =====
+    def create_figure_one(self, household_income, data_of_loans, monthly_expenses, months, predicted_inflation) -> go.Figure:
 
-        # just in case if started at an earlier year / month
-        model_sy = start_year
-        model_sm = start_month
-        # model's minimum start date: 2023, 8
-        if (start_year > 2023):
-            # bigger than 2023 (constant 5 for from August 2023)
-            offset_months = 5 + end_month + 12 * (start_year - 2024)
-            model_sy = 2023
-            model_sm = 8
-        elif (start_year == 2023):
-            # is 2023
-            if (start_month > 8):
-                # if month bigger than 8, set it to 8 and set offset
-                offset_months = end_month - start_month
-                model_sm = 8
+        real_full_expenses = [monthly_expenses for i in range(len(months))]
+        print(data_of_loans)
 
-        predicted_inflation, predicted_overall_inflation = predict_inflation(
-            create_date_range(model_sy, model_sm,
-                              installment_months + offset_months)
-        )
+        # From the required starting loan date to final loan end date, add all loans to full_expenses
+        for loan_focused in data_of_loans:
+            offset = loan_focused["start_offset"]
 
-        predicted_inflation = predicted_inflation[offset_months:]
-
-        months = []
-        for i in range(start_month, start_month+installment_months):
-
-            if i % 12 != 0:
-                # 1 - 11
-                months.append(f"{start_year}/{i % 12}")
-            else:
-                months.append(f"{start_year}/12")
-                start_year += 1
+            for j in range(loan_focused["installment_months"]):
+                real_full_expenses[
+                    offset + j] += loan_focused["real_monthly_payment"][j]
 
         real_income = [household_income]
-        real_debt_cost = [real_loan_cost_montly]
-        real_monthly_expenses = [monthly_expenses + real_debt_cost[0]]
-
-        for m in range(1, len(predicted_inflation)):
+        for m in range(len(months)):
             real_income.append(
                 real_income[m - 1] * (1 - predicted_inflation[m] / 100)
             )
-            real_debt_cost.append(
-                real_debt_cost[m - 1] * (1 - predicted_inflation[m] / 100)
-            )
-            real_monthly_expenses.append(monthly_expenses + real_debt_cost[-1])
 
-        # Figure Creation
-        trace1 = go.Scatter(x=months, y=real_income, mode='lines',
-                            name='Real Monthly Income', fill='tozeroy')
-        trace2 = go.Scatter(x=months, y=real_monthly_expenses, mode='lines',
-                            name='Real Monthly Expenses', fill='tozeroy')
-        trace3 = go.Scatter(x=months, y=real_debt_cost, mode='lines',
-                            name='Real Monthly Debt', fill='tozeroy')
+        monthly_income_trace = go.Scatter(x=months, y=real_income, mode='lines',
+                                          name='Real Monthly Income', fill='tozeroy',
+                                          marker=dict(color='green', line=dict(
+                                              color='green', width=2)),
+                                          fillcolor='rgba(0, 255, 0, 0.3)')
+        full_expenses_trace = go.Scatter(x=months, y=real_full_expenses, mode='lines',
+                                         name='Real Monthly Expenses', fill='tozeroy',
+                                         marker=dict(color='red', line=dict(
+                                             color='red', width=2)),
+                                         fillcolor='rgba(255, 0, 0, 0.3)')
 
-        fig = go.Figure(
-            data=[trace1, trace2, trace3],
+        return go.Figure(
+            data=[monthly_income_trace, full_expenses_trace],
 
             layout=go.Layout(
                 title='Financial Report',
@@ -166,13 +148,207 @@ class State(rx.State):
                 minreducedwidth=800,
             )
         )
-        fig.update_layout(yaxis_range=[0, 20000])
 
-        self.figure_plt = fig
-        self.figure_loading = "Data is ready"
+    def create_figure_two(self, data_of_loans, monthly_expenses, months) -> go.Figure:
+        # Create a stacked chart, with basic neccesity at the bottom, and stacked on top are loans
+        real_basic_neccesity = [monthly_expenses for i in range(len(months))]
+        offset_cumulative = real_basic_neccesity.copy()
 
+        basic_neccesity_trace = go.Scatter(x=months, y=real_basic_neccesity, mode='lines',
+                                           name='Real Basic Neccesity', fill='tonexty',
+                                           marker=dict(color='#ffcc00', line=dict(
+                                               color='#ffcc00', width=2)),
+                                           fillcolor='#ffcc00'
+                                           )
+
+        # Initialize Tracers Holder
+        tracers = [basic_neccesity_trace]
+
+        for loan_focused in data_of_loans:
+            cumulative_payment = [0 for i in range(len(months))]
+
+            offset = loan_focused["start_offset"]
+
+            for j in range(loan_focused["installment_months"]):
+                cumulative_payment[offset + j] = offset_cumulative[
+                    offset + j] + loan_focused["real_monthly_payment"][j]
+
+                # Update Offset_Cumulative
+                offset_cumulative[
+                    offset + j] += loan_focused["real_monthly_payment"][j]
+            print(cumulative_payment)
+
+            tracers.append(
+                go.Scatter(x=months, y=cumulative_payment, mode='lines',
+                           name=loan_focused["name"], fill='tonexty'
+                           )
+            )
+
+        return go.Figure(
+            data=tracers,
+            layout=go.Layout(
+                title='Financial Report',
+                xaxis=dict(
+                    tickvals=months,
+                    ticktext=months,
+                    dtick=1
+                ),
+                yaxis=dict(range=[0, 20000], dtick=1000),
+                minreducedheight=800,
+                minreducedwidth=800,
+            )
+        )
+
+    def diff_month(self, d1, d2):
+        # d1 should be HIGHER or EQUAL to d2
+        return (abs(d1.year - d2.year) * 12 + d1.month - d2.month)
+
+    def process_loan_data(self, loanData):
+        processed = {}
+
+        processed["name"] = loanData["name"]
+        start_year, start_month = loanData["sym"].split("/")
+        processed["start_year"], processed["start_month"] = int(
+            start_year), int(start_month)
+
+        loan_amt = int(loanData["loan"])
+        loan_interest = 1.0 + (int(loanData["interest"]) / 100)
+        processed["installment_months"] = int(loanData["installment"])
+        processed["installment_payment"] = (
+            loan_amt * loan_interest
+        ) / processed["installment_months"]
+
+        processed["end_year"] = processed["start_year"] + \
+            (processed["start_month"] +
+             processed["installment_months"] - 1) // 12
+        processed["end_month"] = (
+            processed["start_month"] + processed["installment_months"] - 1) % 12 + 1
+
+        return processed
+
+    def calculate_real_loan(self, processedLoanData, predicted_inflation, months, start_y, start_m):
+        # 1) Get the real monthly installment until end 2) Find out the range of months it's in (x-axis)
+
+        # From the global required start offset, where should THIS loan start?
+        start_offset = abs(self.diff_month(datetime(
+            processedLoanData["start_year"], processedLoanData["start_month"], 1), datetime(start_y, start_m, 1)))
+
+        processedLoanData["months_x"] = months[start_offset: start_offset +
+                                               processedLoanData["installment_months"]]
+        processedLoanData["start_offset"] = start_offset
+
+        # Initialise with the first value (because its compounding)
+        processedLoanData["real_monthly_payment"] = [
+            processedLoanData["installment_payment"] * (1 - predicted_inflation[start_offset] / 100)]
+
+        for i in range(1, len(processedLoanData["months_x"])):
+            processedLoanData["real_monthly_payment"].append(
+                processedLoanData["real_monthly_payment"][i - 1] * (1 - predicted_inflation[start_offset + i] / 100))
+
+    def create_figures(self, household_income, monthly_expenses) -> go.Figure:
+        # Get the loans (recalculates all loans, if new loan added would re-calculate)
+        data_of_loans = []
+
+        for loanData in self.loans_from_user:
+            data_of_loans.append(self.process_loan_data(loanData))
+
+        # Check the starting of each loans Year and Month
+        lowest_start_year = min([x["start_year"] for x in data_of_loans])
+        lowest_start_month = min(
+            [x["start_month"] for x in data_of_loans if x["start_year"] == lowest_start_year])
+
+        highest_end_year = max([x["end_year"] for x in data_of_loans])
+        highest_end_month = max(
+            [x["end_month"] for x in data_of_loans if x["end_year"] == highest_end_year])
+
+        period_from_starting_date = self.diff_month(datetime(highest_end_year, highest_end_month, 1), datetime(
+            lowest_start_year, lowest_start_month, 1))
+
+        # just in case if started at an earlier year / month
+        model_sy = lowest_start_year
+        model_sm = lowest_start_month
+
+        # model's minimum start date: 2023, 8
+        if (lowest_start_year > 2023):
+            # bigger than 2023 (constant 5 for from August 2023)
+            model_sy = 2023
+            model_sm = 8
+        elif (lowest_start_year == 2023):
+            # is 2023
+            if (lowest_start_month > 8):
+                # if month bigger than 8, set it to 8 and set offset
+                model_sm = 8
+
+        # Model sy and sm will only be lower than 2023 Aug if a loan is lower than that. Offset is difference between required start date of loans,
+        # and actual date of model considerations
+        offset = self.diff_month(datetime(
+            lowest_start_year, lowest_start_month, 1), datetime(model_sy, model_sm, 1))
+        offset = offset if offset > 0 else 0
+
+        # offset is from model_sy and model_sm considerations
+        predicted_inflation, predicted_overall_inflation = predict_inflation(
+            create_date_range(model_sy, model_sm,
+                              period_from_starting_date + offset)
+        )
+
+        # now only predicted inflation from required loan start date till the end of all loans
+        predicted_inflation = predicted_inflation[offset:]
+
+        # print(model_sy, model_sm)
+        # print(lowest_start_year, lowest_start_month)
+
+        months = []
+        copy_lsy = lowest_start_year
+        for i in range(lowest_start_month, lowest_start_month+len(predicted_inflation)):
+            if i % 12 != 0:
+                # 1 - 11
+                months.append(f"{copy_lsy}/{i % 12}")
+            else:
+                months.append(f"{copy_lsy}/12")
+                copy_lsy += 1
+
+        # print(predicted_inflation)
+        # print(len(predicted_inflation))
+        # print(months)
+        # print(len(months))
+
+        # Calculate Real Loan Data
+        for i in range(len(data_of_loans)):
+            self.calculate_real_loan(
+                data_of_loans[i], predicted_inflation, months, lowest_start_year, lowest_start_month)
+
+        # print(data_of_loans)
+
+        # ===== Figure Drawing =====
+        # Income vs Loan
+        self.figure_plt_1 = self.create_figure_one(
+            household_income, data_of_loans, monthly_expenses, months, predicted_inflation
+        )
+
+        self.figure_plt_2 = self.create_figure_two(
+            data_of_loans, monthly_expenses, months
+        )
+
+
+# real_income = [household_income]
+# real_full_expenses = [monthly_expenses + real_debt_cost[0]]
+
+# real_basic_neccesity = [monthly_expenses]
+# real_stacked_debt1 = [real_loan_cost_montly + monthly_expenses]
+
+# for m in range(1, len(predicted_inflation)):
+#     real_income.append(
+#         real_income[m - 1] * (1 - predicted_inflation[m] / 100)
+#     )
+#     real_debt_cost.append(
+#         real_debt_cost[m - 1] * (1 - predicted_inflation[m] / 100)
+#     )
+#     real_full_expenses.append(monthly_expenses + real_debt_cost[-1])
+#     real_basic_neccesity.append(monthly_expenses)
+#     real_stacked_debt1.append(real_debt_cost[-1] + monthly_expenses)
 
 # ===== Model Code =====
+
 
 def read_data():
     df = pd.read_csv('./pynecone/model/cleaned_data.csv')
