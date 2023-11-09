@@ -37,14 +37,12 @@ def sidebar_header() -> rx.Component:
                     "bg": styles.accent_color,
                 },
             ),
-            href="https://github.com/reflex-dev/reflex",
+            href="https://github.com/AndrewKzx/Techlympics",
         ),
         width="100%",
         border_bottom=styles.border,
         padding="1em",
     )
-
-# Ignore
 
 
 def sidebar_footer() -> rx.Component:

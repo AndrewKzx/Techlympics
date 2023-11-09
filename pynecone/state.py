@@ -143,6 +143,7 @@ class State(rx.State):
             )
             real_monthly_expenses.append(monthly_expenses + real_debt_cost[-1])
 
+        # Figure Creation
         trace1 = go.Scatter(x=months, y=real_income, mode='lines',
                             name='Real Monthly Income', fill='tozeroy')
         trace2 = go.Scatter(x=months, y=real_monthly_expenses, mode='lines',
