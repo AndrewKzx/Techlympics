@@ -5,6 +5,7 @@ import reflex as rx
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
+import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, BatchNormalization, Activation
@@ -129,7 +130,7 @@ class State(rx.State):
                                              color='red', width=2)),
                                          fillcolor='rgba(255, 0, 0, 0.3)')
 
-        return go.Figure(
+        figure = go.Figure(
             data=[monthly_income_trace, full_expenses_trace],
 
             layout=go.Layout(
@@ -142,44 +143,34 @@ class State(rx.State):
                 yaxis=dict(range=[0, 20000], dtick=1000),
                 height=800,
                 width=800,
+                hovermode="x unified"
             )
         )
+
+        return figure
 
     def create_figure_two(self, data_of_loans, monthly_expenses, months) -> go.Figure:
         # Create a stacked chart, with basic neccesity at the bottom, and stacked on top are loans
         real_basic_neccesity = [monthly_expenses for i in range(len(months))]
-        offset_cumulative = real_basic_neccesity.copy()
 
         basic_neccesity_trace = go.Scatter(x=months, y=real_basic_neccesity, mode='lines',
-                                           name='Real Basic Neccesity', fill='tonexty',
+                                           name='Real Basic Neccesity',
                                            marker=dict(color='#ffcc00', line=dict(
-                                               color='#ffcc00', width=2)),
-                                           fillcolor='#ffcc00'
+                                               color='orange', width=2)),
+                                           fillcolor='#ffcc00', stackgroup='one'
                                            )
 
         # Initialize Tracers Holder
         tracers = [basic_neccesity_trace]
 
         for loan_focused in data_of_loans:
-            cumulative_payment = [0 for i in range(len(months))]
-
-            offset = loan_focused["start_offset"]
-
-            for j in range(loan_focused["installment_months"]):
-                cumulative_payment[offset + j] = offset_cumulative[
-                    offset + j] + loan_focused["real_monthly_payment"][j]
-
-                # Update Offset_Cumulative
-                offset_cumulative[
-                    offset + j] += loan_focused["real_monthly_payment"][j]
-
             tracers.append(
-                go.Scatter(x=months, y=cumulative_payment, mode='lines',
-                           name=loan_focused["name"], fill='tonexty'
+                go.Scatter(x=loan_focused["months_x"], y=loan_focused["real_monthly_payment"], mode='lines',
+                           line=dict(width=2), name=loan_focused["name"], stackgroup='one'
                            )
             )
 
-        return go.Figure(
+        figure = go.Figure(
             data=tracers,
             layout=go.Layout(
                 title='Financial Report',
@@ -188,11 +179,38 @@ class State(rx.State):
                     ticktext=months,
                     dtick=1
                 ),
-                yaxis=dict(range=[0, 20000], dtick=1000),
                 height=800,
                 width=800,
             )
         )
+
+        # Generate hover information
+        hover_text_months = [
+            f'<b>{months[i]}</b></br></br> <b>Real Basic Necessity</b>: {real_basic_neccesity[i]}</br>' for i in range(len(months))]
+
+        figure.update_layout(
+            hoverlabel=dict(
+                namelength=-1  # Set namelength to -1 to expand hover label size dynamically
+            )
+        )
+
+        # Include loan information
+        for loan_focused in data_of_loans:
+            offset = loan_focused["start_offset"]
+            loan_name = loan_focused['name']
+            real_monthly_payment = loan_focused['real_monthly_payment']
+
+            for j in range(loan_focused["installment_months"]):
+                hover_text_months[
+                    offset + j] += f'<b>{loan_name}</b>: {real_monthly_payment[j]}</br>'
+
+        for data in figure.data:
+            data.hoverinfo = 'text'
+            data.hovertext = hover_text_months
+
+        figure.update_layout(hovermode='closest')
+
+        return figure
 
     def diff_month(self, d1, d2):
         # d1 should be HIGHER or EQUAL to d2
@@ -313,6 +331,8 @@ class State(rx.State):
         self.figure_plt_2 = self.create_figure_two(
             data_of_loans, monthly_expenses, months
         )
+
+        print("creation done")
 
 # ===== Model Code =====
 

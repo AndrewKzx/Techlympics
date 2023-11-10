@@ -38,13 +38,13 @@ export default function Component() {
     }
   }, [router])
 
-  const ref_expenses = useRef(null); refs['ref_expenses'] = ref_expenses;
-  const ref_sym = useRef(null); refs['ref_sym'] = ref_sym;
-  const ref_interest = useRef(null); refs['ref_interest'] = ref_interest;
   const ref_installment = useRef(null); refs['ref_installment'] = ref_installment;
-  const ref_income = useRef(null); refs['ref_income'] = ref_income;
-  const ref_name = useRef(null); refs['ref_name'] = ref_name;
+  const ref_sym = useRef(null); refs['ref_sym'] = ref_sym;
   const ref_loan = useRef(null); refs['ref_loan'] = ref_loan;
+  const ref_expenses = useRef(null); refs['ref_expenses'] = ref_expenses;
+  const ref_name = useRef(null); refs['ref_name'] = ref_name;
+  const ref_income = useRef(null); refs['ref_income'] = ref_income;
+  const ref_interest = useRef(null); refs['ref_interest'] = ref_interest;
 
   return (
     <Fragment>
@@ -93,20 +93,20 @@ export default function Component() {
 </Text>
   <Container sx={{"padding": "1rem", "border": "1px solid #F4F3F6", "borderRadius": "0.375rem", "boxShadow": "0px 0px 0px 1px rgba(84, 82, 95, 0.14)"}}>
   <OrderedList>
-  {state.show_loans.map((fwhknzga, i) => (
-  <ListItem key={i}>
+  {state.show_loans.map((ydhypaxh, khvlittw) => (
+  <ListItem key={khvlittw}>
   <HStack>
   <Text sx={{"fontSize": "1.25em"}}>
-  {fwhknzga}
+  {ydhypaxh}
 </Text>
-  <Button onClick={(_e) => addEvents([Event("state.finish_item", {item:fwhknzga})], (_e))} sx={{"height": "1.5em", "backgroundColor": "white", "textColor": "white", "fontSize": "1em"}}>
+  <Button onClick={(_e) => addEvents([Event("state.finish_item", {item:ydhypaxh})], (_e), {})} sx={{"height": "1.5em", "backgroundColor": "white", "textColor": "white", "fontSize": "1em"}}>
   {`❌`}
 </Button>
 </HStack>
 </ListItem>
 ))}
 </OrderedList>
-  <Box as={`form`} onSubmit={(_e0) => addEvents([Event("state.add_item", {form_data:{"sym": getRefValue(ref_sym), "name": getRefValue(ref_name), "loan": getRefValue(ref_loan), "interest": getRefValue(ref_interest), "installment": getRefValue(ref_installment)}})], (_e0))}>
+  <Box as={`form`} onSubmit={(_e0) => addEvents([Event("state.add_item", {form_data:{"installment": getRefValue(ref_installment), "name": getRefValue(ref_name), "interest": getRefValue(ref_interest), "loan": getRefValue(ref_loan), "sym": getRefValue(ref_sym)}})], (_e0), {"preventDefault": true})}>
   <Text className={`text-black-500 font-bold`}>
   {`Starting Date Info`}
 </Text>
@@ -125,7 +125,7 @@ export default function Component() {
 </Center>
 </Box>
 </Container>
-  <Box as={`form`} onSubmit={(_e0) => addEvents([Event("state.handle_submit", {form_data:{"income": getRefValue(ref_income), "expenses": getRefValue(ref_expenses)}})], (_e0))}>
+  <Box as={`form`} onSubmit={(_e0) => addEvents([Event("state.handle_submit", {form_data:{"income": getRefValue(ref_income), "expenses": getRefValue(ref_expenses)}})], (_e0), {"preventDefault": true})}>
   <Text className={`text-black-500 font-bold text-2xl`}>
   {`Financial Information`}
 </Text>
