@@ -29,8 +29,8 @@ class State(rx.State):
 
         layout=go.Layout(
             title='Financial Report',
-            height=800,
-            width=800,
+            height=400,
+            width=600,
         )
     )
 
@@ -39,8 +39,8 @@ class State(rx.State):
 
         layout=go.Layout(
             title='Financial Report',
-            height=800,
-            width=800,
+            height=400,
+            width=600,
         )
     )
 
@@ -141,8 +141,8 @@ class State(rx.State):
                     dtick=1
                 ),
                 yaxis=dict(range=[0, 20000], dtick=1000),
-                height=800,
-                width=800,
+                height=400,
+                width=600,
                 hovermode="x unified"
             )
         )
@@ -179,8 +179,8 @@ class State(rx.State):
                     ticktext=months,
                     dtick=1
                 ),
-                height=800,
-                width=800,
+                height=400,
+                width=600,
             )
         )
 

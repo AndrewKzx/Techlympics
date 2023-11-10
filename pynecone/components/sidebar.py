@@ -11,7 +11,7 @@ def sidebar_header() -> rx.Component:
         # The logo.
         rx.text(
             "EconoMe",
-            background_image="linear-gradient(271.68deg, #EE756A 0.75%, #756AEE 88.52%)",
+            background_image="linear-gradient(271.68deg, #4CAF50 0.75%, #81C784 88.52%)",
             background_clip="text",
             font_weight="bold",
             font_size="2em",
@@ -233,7 +233,6 @@ def sidebar() -> rx.Component:
                 rx.divider(),
 
                 width="400px",
-                overflow_y="auto",
                 align_items="flex-start",
                 padding="1em",
             ),
