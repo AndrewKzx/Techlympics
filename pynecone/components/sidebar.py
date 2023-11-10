@@ -62,18 +62,20 @@ def final_form() -> rx.Component:
                 class_name="text-black-500 font-bold text-2xl mt-4 mb-2"),
         rx.container(
             # User input for Income
-            rx.text("Household Income", class_name="text-black-500 font-bold"),
+            rx.text("Household Income", class_name="text-black-500 font-bold mb-2"),
             rx.input(placeholder="Enter Current Household Income", id="income",
                      #  on_change=State.handle_change
                      ),
 
             # User input for Expenses
             rx.text("Monthly Expenses (Not inclusive of loan(s))",
-                    class_name="text-black-500 font-bold"),
+                    class_name="text-black-500 font-bold mb-2 mt-4"),
             rx.input(placeholder="Enter Usual Monthly Expenses", id="expenses"),
 
+            rx.center(
             rx.button(
-                "Submit", class_name="bg-blue-500 text-black mt-3", type_="submit"),
+                "Generate", class_name="bg-blue-500 text-white mt-3", type_="submit", bg="green"),
+            ),
             padding="1rem",
             max_width="400px",
             border=styles.border,
