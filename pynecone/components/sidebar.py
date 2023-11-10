@@ -59,7 +59,7 @@ def sidebar_footer() -> rx.Component:
 def final_form() -> rx.Component:
     return rx.form(
         rx.text("Financial Information",
-                class_name="text-black-500 font-bold text-2xl"),
+                class_name="text-black-500 font-bold text-2xl mt-4 mb-2"),
         rx.container(
             # User input for Income
             rx.text("Household Income", class_name="text-black-500 font-bold"),
