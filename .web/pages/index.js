@@ -38,13 +38,13 @@ export default function Component() {
     }
   }, [router])
 
-  const ref_expenses = useRef(null); refs['ref_expenses'] = ref_expenses;
+  const ref_name = useRef(null); refs['ref_name'] = ref_name;
+  const ref_sym = useRef(null); refs['ref_sym'] = ref_sym;
   const ref_loan = useRef(null); refs['ref_loan'] = ref_loan;
   const ref_installment = useRef(null); refs['ref_installment'] = ref_installment;
-  const ref_sym = useRef(null); refs['ref_sym'] = ref_sym;
   const ref_income = useRef(null); refs['ref_income'] = ref_income;
   const ref_interest = useRef(null); refs['ref_interest'] = ref_interest;
-  const ref_name = useRef(null); refs['ref_name'] = ref_name;
+  const ref_expenses = useRef(null); refs['ref_expenses'] = ref_expenses;
 
   return (
     <Fragment>
@@ -77,7 +77,7 @@ export default function Component() {
   <Box sx={{"display": ["none", "none", "block"], "minWidth": "20em", "height": "100%", "position": "sticky", "top": "0px", "borderRight": "1px solid #F4F3F6"}}>
   <VStack sx={{"height": "100dvh"}}>
   <HStack sx={{"width": "400px", "borderBottom": "1px solid #F4F3F6", "padding": "1em"}}>
-  <Text sx={{"backgroundImage": "linear-gradient(271.68deg, #EE756A 0.75%, #756AEE 88.52%)", "backgroundClip": "text", "fontWeight": "bold", "fontSize": "2em"}}>
+  <Text sx={{"backgroundImage": "linear-gradient(271.68deg, #4CAF50 0.75%, #81C784 88.52%)", "backgroundClip": "text", "fontWeight": "bold", "fontSize": "2em"}}>
   {`EconoMe`}
 </Text>
   <Spacer/>
@@ -87,20 +87,20 @@ export default function Component() {
 </Center>
 </Link>
 </HStack>
-  <VStack alignItems={`flex-start`} sx={{"width": "400px", "overflowY": "auto", "padding": "1em"}}>
+  <VStack alignItems={`flex-start`} sx={{"width": "400px", "padding": "1em"}}>
   <Text className={`text-black-500 font-bold text-2xl`}>
   {`Loan Information`}
 </Text>
   <Container sx={{"padding": "1rem", "border": "1px solid #F4F3F6", "borderRadius": "0.375rem", "boxShadow": "0px 0px 0px 1px rgba(84, 82, 95, 0.14)"}}>
   <OrderedList>
   <Container sx={{"borderRadius": "0.375rem", "boxShadow": "0px 0px 0px 1px rgba(84, 82, 95, 0.14)", "width": "100%"}}>
-  {state.show_loans.map((hngljiew, i) => (
+  {state.show_loans.map((xwfprzbe, i) => (
   <ListItem key={i}>
   <HStack>
   <Text sx={{"fontSize": "1.25em"}}>
-  {hngljiew}
+  {xwfprzbe}
 </Text>
-  <Button onClick={(_e) => addEvents([Event("state.finish_item", {item:hngljiew})], (_e))} sx={{"height": "1.5em", "backgroundColor": "white", "textColor": "white", "fontSize": "1em"}}>
+  <Button onClick={(_e) => addEvents([Event("state.finish_item", {item:xwfprzbe})], (_e))} sx={{"height": "1.5em", "backgroundColor": "white", "textColor": "white", "fontSize": "1em"}}>
   {`❌`}
 </Button>
 </HStack>
@@ -108,7 +108,7 @@ export default function Component() {
 ))}
 </Container>
 </OrderedList>
-  <Box as={`form`} onSubmit={(_e0) => addEvents([Event("state.add_item", {form_data:{"installment": getRefValue(ref_installment), "sym": getRefValue(ref_sym), "loan": getRefValue(ref_loan), "name": getRefValue(ref_name), "interest": getRefValue(ref_interest)}})], (_e0))}>
+  <Box as={`form`} onSubmit={(_e0) => addEvents([Event("state.add_item", {form_data:{"loan": getRefValue(ref_loan), "interest": getRefValue(ref_interest), "installment": getRefValue(ref_installment), "sym": getRefValue(ref_sym), "name": getRefValue(ref_name)}})], (_e0))}>
   <Text className={`text-black-500 font-bold`}>
   {`Starting Date Info`}
 </Text>
@@ -127,7 +127,7 @@ export default function Component() {
 </Center>
 </Box>
 </Container>
-  <Box as={`form`} onSubmit={(_e0) => addEvents([Event("state.handle_submit", {form_data:{"expenses": getRefValue(ref_expenses), "income": getRefValue(ref_income)}})], (_e0))}>
+  <Box as={`form`} onSubmit={(_e0) => addEvents([Event("state.handle_submit", {form_data:{"income": getRefValue(ref_income), "expenses": getRefValue(ref_expenses)}})], (_e0))}>
   <Text className={`text-black-500 font-bold text-2xl`}>
   {`Financial Information`}
 </Text>
@@ -165,23 +165,23 @@ export default function Component() {
 </VStack>
 </Box>
   <Box sx={{"paddingTop": "5em", "paddingX": ["auto", "2em"]}}>
-  <Box sx={{"width": "100%", "alignItems": "flex-start", "boxShadow": "0px 0px 0px 1px rgba(84, 82, 95, 0.14)", "borderRadius": "0.375rem", "padding": "1em", "marginBottom": "2em"}}>
+  <Box sx={{"width": "800px", "alignItems": "flex-center", "padding": "1em", "marginBottom": "2em"}}>
   <Container>
-  <Plot data={state.figure_plt_1}/>
-  <Text>
+  <Text sx={{"fontWeight": "bold", "fontSize": "1em", "color": "forestgreen"}}>
   {`Real Monthly Income vs Real Monthly Expenses`}
 </Text>
-  <Plot data={state.figure_plt_2}/>
-  <Text>
+  <Plot data={state.figure_plt_1}/>
+  <Text sx={{"fontWeight": "bold", "fontSize": "1em", "color": "forestgreen"}}>
   {`Breakdown of Real Monthly Expenses (Stacked)`}
 </Text>
+  <Plot data={state.figure_plt_2}/>
 </Container>
 </Box>
 </Box>
   <Spacer/>
   <Box sx={{"position": "fixed", "right": "1.5em", "top": "1.5em", "zIndex": "500"}}>
   <Menu>
-  <MenuButton sx={{"width": "3em", "height": "3em", "backgroundColor": "white", "border": "1px solid #F4F3F6", "borderRadius": "0.375rem"}}>
+  <MenuButton sx={{"width": "3em", "height": "3em", "backgroundColor": "white"}}>
   <HamburgerIcon sx={{"size": "4em", "color": "black"}}/>
 </MenuButton>
   <MenuList>

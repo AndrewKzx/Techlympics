@@ -16,10 +16,8 @@ sidebar_width = "20em"
 template_page_style = {"padding_top": "5em", "padding_x": ["auto", "2em"]}
 
 template_content_style = {
-    "width": "100%",
-    "align_items": "flex-start",
-    "box_shadow": box_shadow,
-    "border_radius": border_radius,
+    "width": "800px",
+    "align_items": "flex-center",
     "padding": "1em",
     "margin_bottom": "2em",
 }
@@ -32,8 +30,6 @@ link_style = {
 
 overlapping_button_style = {
     "background_color": "white",
-    "border": border,
-    "border_radius": border_radius,
 }
 
 base_style = {

@@ -12,9 +12,17 @@ def index() -> rx.Component:
 
     return rx.container(
 
+        rx.text("Real Monthly Income vs Real Monthly Expenses",
+                font_weight="bold",
+                font_size="1em",
+                color="forestgreen"
+                ),
         rx.plotly(data=State.figure_plt_1),
-        rx.text("Real Monthly Income vs Real Monthly Expenses"),
 
+        rx.text("Breakdown of Real Monthly Expenses (Stacked)",
+                font_weight="bold",
+                font_size="1em",
+                color="forestgreen"
+                ),
         rx.plotly(data=State.figure_plt_2),
-        rx.text("Breakdown of Real Monthly Expenses (Stacked)"),
     )
