@@ -33,7 +33,7 @@ def sidebar_header() -> rx.Component:
             ),
             href="https://github.com/AndrewKzx/Techlympics",
         ),
-        width="100%",
+        width="400px",
         border_bottom=styles.border,
         padding="1em",
     )
@@ -232,7 +232,7 @@ def sidebar() -> rx.Component:
                 rx.spacer(),
                 rx.divider(),
 
-                width="80%",
+                width="400px",
                 overflow_y="auto",
                 align_items="flex-start",
                 padding="1em",
