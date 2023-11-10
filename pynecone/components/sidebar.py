@@ -33,6 +33,22 @@ def sidebar_header() -> rx.Component:
             ),
             href="https://github.com/AndrewKzx/Techlympics",
         ),
+        rx.link(
+            rx.center(
+                rx.image(
+                    src="/logo.webp",
+                    height="3em",
+                    padding="0.5em",
+                ),
+                box_shadow=styles.box_shadow,
+                bg="transparent",
+                border_radius=styles.border_radius,
+                _hover={
+                    "bg": styles.accent_color,
+                },
+            ),
+            href="https://data.gov.my/data-catalogue",
+        ),
         width="400px",
         border_bottom=styles.border,
         padding="1em",
