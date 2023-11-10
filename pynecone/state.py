@@ -52,10 +52,10 @@ class State(rx.State):
     def add_item(self, form_data: dict[str, str]):
         # Create a new item string with new lines
         new_item = f"Name: {form_data['name']}\n" \
-                f"Date: {form_data['sym']}\n" \
-                f"Value: {form_data['loan']}\n" \
-                f"Interest: {form_data['interest']}\n" \
-                f"Installment: {form_data['installment']}"
+            f"Date: {form_data['sym']}\n" \
+            f"Value: {form_data['loan']}\n" \
+            f"Interest: {form_data['interest']}\n" \
+            f"Installment: {form_data['installment']}"
 
         # Add the new item to the list
         self.show_loans.append(new_item)
@@ -69,8 +69,6 @@ class State(rx.State):
             rx.set_value("interest", ""),
             rx.set_value("installment", "")
         ]
-
-
 
     def finish_item(self, item: str):
         index = self.show_loans.index(item)
@@ -157,6 +155,7 @@ class State(rx.State):
     def create_figure_two(self, data_of_loans, monthly_expenses, months) -> go.Figure:
         # Create a stacked chart, with basic neccesity at the bottom, and stacked on top are loans
         real_basic_neccesity = [monthly_expenses for i in range(len(months))]
+        cum_cost = real_basic_neccesity.copy()
 
         basic_neccesity_trace = go.Scatter(x=months, y=real_basic_neccesity, mode='lines',
                                            name='Real Basic Neccesity',
@@ -168,12 +167,29 @@ class State(rx.State):
         # Initialize Tracers Holder
         tracers = [basic_neccesity_trace]
 
+        # Initialize hover information
+        hover_text_months = [
+            f'<b>{months[i]}</b></br></br> <b>Real Basic Necessity</b>: {real_basic_neccesity[i]}</br>' for i in range(len(months))]
+
+        # Run loans requirements
         for loan_focused in data_of_loans:
+            offset = loan_focused["start_offset"]
+            loan_name = loan_focused['name']
+            real_monthly_payment = loan_focused['real_monthly_payment']
+
+            for j in range(loan_focused["installment_months"]):
+                cum_cost[offset + j] += round(real_monthly_payment[j], 2)
+                hover_text_months[
+                    offset + j] += f'<b>{loan_name}</b>: {real_monthly_payment[j]}</br>'
+
             tracers.append(
                 go.Scatter(x=loan_focused["months_x"], y=loan_focused["real_monthly_payment"], mode='lines',
                            line=dict(width=2), name=loan_focused["name"], stackgroup='one'
                            )
             )
+
+        for i in range(len(hover_text_months)):
+            hover_text_months[i] += f'<b>Real Cumulated Expense</b>: {cum_cost[i]}</br>'
 
         figure = go.Figure(
             data=tracers,
@@ -189,25 +205,11 @@ class State(rx.State):
             )
         )
 
-        # Generate hover information
-        hover_text_months = [
-            f'<b>{months[i]}</b></br></br> <b>Real Basic Necessity</b>: {real_basic_neccesity[i]}</br>' for i in range(len(months))]
-
         figure.update_layout(
             hoverlabel=dict(
                 namelength=-1  # Set namelength to -1 to expand hover label size dynamically
             )
         )
-
-        # Include loan information
-        for loan_focused in data_of_loans:
-            offset = loan_focused["start_offset"]
-            loan_name = loan_focused['name']
-            real_monthly_payment = loan_focused['real_monthly_payment']
-
-            for j in range(loan_focused["installment_months"]):
-                hover_text_months[
-                    offset + j] += f'<b>{loan_name}</b>: {real_monthly_payment[j]}</br>'
 
         for data in figure.data:
             data.hoverinfo = 'text'
@@ -231,7 +233,7 @@ class State(rx.State):
 
         loan_amt = int(loanData["loan"])
         loan_interest = 1.0 + (int(loanData["interest"]) / 100)
-        processed["installment_months"] = int(loanData["installment"])
+        processed["installment_months"] = float(loanData["installment"])
         processed["installment_payment"] = (
             loan_amt * loan_interest
         ) / processed["installment_months"]
