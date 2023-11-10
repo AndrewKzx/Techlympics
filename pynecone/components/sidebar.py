@@ -244,6 +244,7 @@ def sidebar() -> rx.Component:
         min_width=styles.sidebar_width,
         height="100%",
         position="sticky",
+        overflow_y="auto",
         top="0px",
         border_right=styles.border,
     )
