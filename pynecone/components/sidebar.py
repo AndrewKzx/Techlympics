@@ -137,13 +137,13 @@ def new_loan() -> rx.Component:
     return rx.form(
         # User input for Starting Date info
         rx.text("Starting Date Info",
-                class_name="text-black-500 font-bold"),
+                class_name="text-black-500 font-bold mb-2"),
         rx.input(
             placeholder="Enter Starting Year and Month (2023/05)", id="sym", class_name="mb-4"),
 
         # User input for Loan Info
         rx.text("Relevant Loan Info",
-                class_name="text-black-500 font-bold"),
+                class_name="text-black-500 font-bold mb-2"),
         rx.input(placeholder="Enter Loan Name",
                  id="name", class_name="mb-4"),
         rx.input(placeholder="Enter Loan Amount (RM)",
