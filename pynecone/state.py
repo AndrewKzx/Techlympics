@@ -50,11 +50,14 @@ class State(rx.State):
     # ===== State Fields =====
 
     def add_item(self, form_data: dict[str, str]):
-        # Add the new item to the list.
-        new_item = f"{form_data['name']} - " + f"Date: {form_data['sym']}" + f" Value:{form_data['loan']}" + \
-            f" Interest:{form_data['interest']}" + \
-            f" Installment:{form_data['installment']}"
+        # Create a new item string with new lines
+        new_item = f"Name: {form_data['name']}\n" \
+                f"Date: {form_data['sym']}\n" \
+                f"Value: {form_data['loan']}\n" \
+                f"Interest: {form_data['interest']}\n" \
+                f"Installment: {form_data['installment']}"
 
+        # Add the new item to the list
         self.show_loans.append(new_item)
         self.loans_from_user.append(form_data)
 
@@ -66,6 +69,8 @@ class State(rx.State):
             rx.set_value("interest", ""),
             rx.set_value("installment", "")
         ]
+
+
 
     def finish_item(self, item: str):
         index = self.show_loans.index(item)

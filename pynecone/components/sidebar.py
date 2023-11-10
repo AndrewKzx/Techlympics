@@ -137,17 +137,17 @@ def new_loan() -> rx.Component:
         rx.text("Starting Date Info",
                 class_name="text-black-500 font-bold"),
         rx.input(
-            placeholder="Enter Starting Year and Month (2023/05)", id="sym", class_name="mb-1.5"),
+            placeholder="Enter Starting Year and Month (2023/05)", id="sym", class_name="mb-4"),
 
         # User input for Loan Info
         rx.text("Relevant Loan Info",
                 class_name="text-black-500 font-bold"),
         rx.input(placeholder="Enter Loan Name",
-                 id="name", class_name="mb-1.5"),
+                 id="name", class_name="mb-4"),
         rx.input(placeholder="Enter Loan Amount (RM)",
-                 id="loan", class_name="mb-1.5"),
+                 id="loan", class_name="mb-4"),
         rx.input(placeholder="Enter Interest Rate (%)",
-                 id="interest", class_name="mb-1.5"),
+                 id="interest", class_name="mb-4"),
         rx.input(placeholder="Installment (Months)", id="installment"),
 
         # Clicking the button will also submit the form.
@@ -193,7 +193,12 @@ def todo_loan(item: rx.Var[str]) -> rx.Component:
 
 def loans_list() -> rx.Component:
     return rx.ordered_list(
+        rx.container(
         rx.foreach(State.show_loans, lambda loan: todo_loan(loan)),
+        border_radius=styles.border_radius,
+            box_shadow=styles.box_shadow,
+            width="100%",
+        ),
     )
 
 # The main place to adjust the design and add components
