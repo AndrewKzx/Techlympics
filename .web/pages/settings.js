@@ -36,13 +36,13 @@ export default function Component() {
     }
   }, [router])
 
-  const ref_income = useRef(null); refs['ref_income'] = ref_income;
-  const ref_installment = useRef(null); refs['ref_installment'] = ref_installment;
-  const ref_expenses = useRef(null); refs['ref_expenses'] = ref_expenses;
-  const ref_loan = useRef(null); refs['ref_loan'] = ref_loan;
-  const ref_interest = useRef(null); refs['ref_interest'] = ref_interest;
-  const ref_sym = useRef(null); refs['ref_sym'] = ref_sym;
   const ref_name = useRef(null); refs['ref_name'] = ref_name;
+  const ref_expenses = useRef(null); refs['ref_expenses'] = ref_expenses;
+  const ref_sym = useRef(null); refs['ref_sym'] = ref_sym;
+  const ref_interest = useRef(null); refs['ref_interest'] = ref_interest;
+  const ref_installment = useRef(null); refs['ref_installment'] = ref_installment;
+  const ref_loan = useRef(null); refs['ref_loan'] = ref_loan;
+  const ref_income = useRef(null); refs['ref_income'] = ref_income;
 
   return (
     <Fragment>
@@ -72,7 +72,7 @@ export default function Component() {
 )}
 </Fragment>
   <HStack alignItems={`flex-start`} sx={{"transition": "left 0.5s, width 0.5s", "position": "relative"}}>
-  <Box sx={{"display": ["none", "none", "block"], "minWidth": "20em", "height": "100%", "position": "sticky", "overflowY": "auto", "top": "0px", "borderRight": "1px solid #F4F3F6"}}>
+  <Box sx={{"display": ["none", "none", "block"], "minWidth": "30em", "height": "100%", "position": "sticky", "overflowY": "auto", "top": "0px", "borderRight": "1px solid #F4F3F6"}}>
   <VStack sx={{"height": "100dvh"}}>
   <HStack sx={{"width": "400px", "borderBottom": "1px solid #F4F3F6", "padding": "1em"}}>
   <Text sx={{"backgroundImage": "linear-gradient(271.68deg, #4CAF50 0.75%, #81C784 88.52%)", "backgroundClip": "text", "fontWeight": "bold", "fontSize": "2em"}}>
@@ -92,13 +92,13 @@ export default function Component() {
   <Container sx={{"padding": "1rem", "border": "1px solid #F4F3F6", "borderRadius": "0.375rem", "boxShadow": "0px 0px 0px 1px rgba(84, 82, 95, 0.14)"}}>
   <OrderedList>
   <Container sx={{"borderRadius": "0.375rem", "boxShadow": "0px 0px 0px 1px rgba(84, 82, 95, 0.14)", "width": "100%"}}>
-  {state.show_loans.map((jkxrkalm, i) => (
+  {state.show_loans.map((ibkjrwrw, i) => (
   <ListItem key={i}>
   <HStack>
   <Text sx={{"fontSize": "1.25em"}}>
-  {jkxrkalm}
+  {ibkjrwrw}
 </Text>
-  <Button onClick={(_e) => addEvents([Event("state.finish_item", {item:jkxrkalm})], (_e))} sx={{"height": "1.5em", "backgroundColor": "white", "textColor": "white", "fontSize": "1em"}}>
+  <Button onClick={(_e) => addEvents([Event("state.finish_item", {item:ibkjrwrw})], (_e))} sx={{"height": "1.5em", "backgroundColor": "white", "textColor": "white", "fontSize": "1em"}}>
   {`❌`}
 </Button>
 </HStack>
@@ -106,7 +106,7 @@ export default function Component() {
 ))}
 </Container>
 </OrderedList>
-  <Box as={`form`} onSubmit={(_e0) => addEvents([Event("state.add_item", {form_data:{"installment": getRefValue(ref_installment), "interest": getRefValue(ref_interest), "sym": getRefValue(ref_sym), "name": getRefValue(ref_name), "loan": getRefValue(ref_loan)}})], (_e0))}>
+  <Box as={`form`} onSubmit={(_e0) => addEvents([Event("state.add_item", {form_data:{"loan": getRefValue(ref_loan), "installment": getRefValue(ref_installment), "name": getRefValue(ref_name), "interest": getRefValue(ref_interest), "sym": getRefValue(ref_sym)}})], (_e0))}>
   <Text className={`text-black-500 font-bold`}>
   {`Starting Date Info`}
 </Text>
@@ -125,7 +125,7 @@ export default function Component() {
 </Center>
 </Box>
 </Container>
-  <Box as={`form`} onSubmit={(_e0) => addEvents([Event("state.handle_submit", {form_data:{"expenses": getRefValue(ref_expenses), "income": getRefValue(ref_income)}})], (_e0))}>
+  <Box as={`form`} onSubmit={(_e0) => addEvents([Event("state.handle_submit", {form_data:{"income": getRefValue(ref_income), "expenses": getRefValue(ref_expenses)}})], (_e0))}>
   <Text className={`text-black-500 font-bold text-2xl mt-4 mb-2`}>
   {`Financial Information`}
 </Text>
