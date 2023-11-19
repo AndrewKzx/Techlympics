@@ -5,6 +5,8 @@ import reflex as rx
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
+from bardapi import Bard
+
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
@@ -46,6 +48,16 @@ class State(rx.State):
 
     figure_loading: str = "Ready for input"
     # ===== Figure Data =====
+
+    # ===== Chatbot API =====
+    bard = Bard(
+        "xxxxx"
+    )
+
+    def getChatAnswer(self, prompt):
+        answer = self.bard.get_answer(prompt)
+        return answer['content']
+    # ===== Chatbot API =====
 
     # ===== State Fields =====
 
