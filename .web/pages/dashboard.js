@@ -36,6 +36,7 @@ export default function Component() {
     }
   }, [router])
 
+<<<<<<< Updated upstream
   const ref_installment = useRef(null); refs['ref_installment'] = ref_installment;
   const ref_loan = useRef(null); refs['ref_loan'] = ref_loan;
   const ref_expenses = useRef(null); refs['ref_expenses'] = ref_expenses;
@@ -43,6 +44,15 @@ export default function Component() {
   const ref_interest = useRef(null); refs['ref_interest'] = ref_interest;
   const ref_name = useRef(null); refs['ref_name'] = ref_name;
   const ref_income = useRef(null); refs['ref_income'] = ref_income;
+=======
+  const ref_sym = useRef(null); refs['ref_sym'] = ref_sym;
+  const ref_name = useRef(null); refs['ref_name'] = ref_name;
+  const ref_installment = useRef(null); refs['ref_installment'] = ref_installment;
+  const ref_income = useRef(null); refs['ref_income'] = ref_income;
+  const ref_loan = useRef(null); refs['ref_loan'] = ref_loan;
+  const ref_interest = useRef(null); refs['ref_interest'] = ref_interest;
+  const ref_expenses = useRef(null); refs['ref_expenses'] = ref_expenses;
+>>>>>>> Stashed changes
 
   return (
     <Fragment>
@@ -97,11 +107,19 @@ export default function Component() {
   <Container sx={{"padding": "1rem", "border": "1px solid #F4F3F6", "borderRadius": "0.375rem", "boxShadow": "0px 0px 0px 1px rgba(84, 82, 95, 0.14)"}}>
   <OrderedList>
   <Container sx={{"borderRadius": "0.375rem", "boxShadow": "0px 0px 0px 1px rgba(84, 82, 95, 0.14)", "width": "100%"}}>
+<<<<<<< Updated upstream
   {state.show_loans.map((ngtjatqw, i) => (
   <ListItem key={i}>
   <HStack>
   <Box dangerouslySetInnerHTML={{"__html": ngtjatqw}}/>
   <Button onClick={(_e) => addEvents([Event("state.finish_item", {item:ngtjatqw})], (_e))} sx={{"height": "1.5em", "backgroundColor": "white", "textColor": "white", "fontSize": "1em"}}>
+=======
+  {state.show_loans.map((ovglsvjo, xafwhdkn) => (
+  <ListItem key={xafwhdkn}>
+  <HStack>
+  <Box dangerouslySetInnerHTML={{"__html": ovglsvjo}}/>
+  <Button onClick={(_e) => addEvents([Event("state.finish_item", {item:ovglsvjo})], (_e), {})} sx={{"height": "1.5em", "backgroundColor": "white", "textColor": "white", "fontSize": "1em"}}>
+>>>>>>> Stashed changes
   {`❌`}
 </Button>
 </HStack>
@@ -109,7 +127,11 @@ export default function Component() {
 ))}
 </Container>
 </OrderedList>
+<<<<<<< Updated upstream
   <Box as={`form`} onSubmit={(_e0) => addEvents([Event("state.add_item", {form_data:{"interest": getRefValue(ref_interest), "sym": getRefValue(ref_sym), "installment": getRefValue(ref_installment), "name": getRefValue(ref_name), "loan": getRefValue(ref_loan)}})], (_e0))}>
+=======
+  <Box as={`form`} onSubmit={(_e0) => addEvents([Event("state.add_item", {form_data:{"installment": getRefValue(ref_installment), "name": getRefValue(ref_name), "interest": getRefValue(ref_interest), "sym": getRefValue(ref_sym), "loan": getRefValue(ref_loan)}})], (_e0), {"preventDefault": true})}>
+>>>>>>> Stashed changes
   <Text className={`text-black-500 font-bold mb-2`}>
   {`Starting Date Info`}
 </Text>
@@ -128,7 +150,11 @@ export default function Component() {
 </Center>
 </Box>
 </Container>
+<<<<<<< Updated upstream
   <Box as={`form`} onSubmit={(_e0) => addEvents([Event("state.handle_submit", {form_data:{"income": getRefValue(ref_income), "expenses": getRefValue(ref_expenses)}})], (_e0))}>
+=======
+  <Box as={`form`} onSubmit={(_e0) => addEvents([Event("state.handle_submit", {form_data:{"expenses": getRefValue(ref_expenses), "income": getRefValue(ref_income)}})], (_e0), {"preventDefault": true})}>
+>>>>>>> Stashed changes
   <Text className={`text-black-500 font-bold text-2xl mt-4 mb-2`}>
   {`Financial Information`}
 </Text>

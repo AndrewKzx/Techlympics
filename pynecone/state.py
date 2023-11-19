@@ -116,10 +116,16 @@ class State(rx.State):
                     offset + j] += loan_focused["real_monthly_payment"][j]
 
         real_income = [household_income]
-        for m in range(len(months)):
+        for m in range(1, len(months)):
             real_income.append(
+                # previous real_income * current predicted_inflation
                 real_income[m - 1] * ((100 - predicted_inflation[m]) / 100)
             )
+
+            # Add 5% if January
+            if (months[m].split("/")[1] == "1"):
+                print(months[m])
+                real_income[-1] *= 1.03
 
         monthly_income_trace = go.Scatter(x=months, y=real_income, mode='lines',
                                           name='Real Monthly Income', fill='tozeroy',
@@ -365,9 +371,12 @@ class State(rx.State):
             prompt += f"Interest Rate: {loanData['interest']}% "
             prompt += f"Installment Period: {loanData['installment']} months\n"
 
+<<<<<<< Updated upstream
         prompt += "Analyze the financial impact of these loans on the individual's budget, considering the gradual reduction in dosposable income and the long-term implications of managing these loans alongside other living expenses. Don't give additional number analysis and calculations, just paragraph of words and only in one short paragraphs"
         print(prompt)
+=======
+        prompt += "Analyze the financial impact of these loans on the individual's budget, considering the gradual reduction in dosposable income and the long-term implications of managing these loans alongside other living expenses. Don't give additional number analysis and calculations, just paragraph of words and only in two short paragraphs"
+>>>>>>> Stashed changes
 
         answer = bard.get_answer(prompt)
-        print(answer)
         self.bard_ouput = answer['content']
