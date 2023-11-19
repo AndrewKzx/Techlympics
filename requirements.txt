@@ -2,3 +2,4 @@ tensorflow==2.14.0
 reflex==0.3.1
 plotly==5.14.1
 pandas==2.1.2
+bardapi==0.1.38
