@@ -47,21 +47,10 @@ export function formatCell(value, column) {
                 readonly: !editable,
             }
         default:
-            console.log("Warning: column.type is undefined for column.title=" + column.title)
             return {
                 kind: GridCellKind.Text,
                 data: value,
-                displayData: column.type
+                displayData: "type not specified in column definition"
             }
     };
 };
-
-export function formatDataEditorCells(col, row, columns, data) {
-    if (row < data.length && col < columns.length) {
-        const column = getDEColumn(columns, col);
-        const rowData = getDERow(data, row);
-        const cellData = locateCell(rowData, column);
-        return formatCell(cellData, column);
-    }
-    return { kind: GridCellKind.Loading };
-}
