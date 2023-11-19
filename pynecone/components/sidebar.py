@@ -49,9 +49,10 @@ def sidebar_header() -> rx.Component:
             ),
             href="https://data.gov.my/data-catalogue",
         ),
-        width="400px",
+        width="500px",
         border_bottom=styles.border,
         padding="1em",
+        background_color="white",
     )
 
 
@@ -69,6 +70,7 @@ def sidebar_footer() -> rx.Component:
         width="100%",
         border_top=styles.border,
         padding="1em",
+        background_color="white",
     )
 
 
@@ -97,6 +99,7 @@ def final_form() -> rx.Component:
             border=styles.border,
             border_radius=styles.border_radius,
             box_shadow=styles.box_shadow,
+            background_color="white",
         ),
 
         # When user click submit, this is sent to state.py/handle_submit function
@@ -190,23 +193,38 @@ def todo_loan(item: rx.Var[str]) -> rx.Component:
     Returns:
         A single rendered todo list item.
     """
-   
-    
+
     return rx.list_item(
-        rx.hstack(
-            # A button to finish the item.
-            rx.html(item),
-            rx.button(
-                "❌",
-                on_click=lambda: State.finish_item(item),
-                height="1.5em",
-                background_color="white",
-                text_color="white",  # Set the text color to white
-                font_size="1em",  # Adjust the font size as needed
-            ),
-            # The item text.
-        )
-    )
+    
+
+    rx.hstack(
+
+
+        # The item text.
+        rx.html(item),  # Assuming item is a string containing HTML content
+
+        # A button to finish the item.
+        rx.spacer(),  # Add a spacer to push the button to the right
+        rx.button(
+            "❌",
+            on_click=lambda: State.finish_item(item),
+            height="10em",
+            background_color="#f4f4f4",
+            text_color="white",
+            font_size="1em",
+            align="right",  # Align the button to the right
+        ),
+    ),
+    font_weight="bold",
+    font_family="Arial",
+    font_size="1em",
+    margin_top="1em",
+    margin_bottom="0.5em",
+    border_radius=styles.border_radius,
+    box_shadow=styles.box_shadow,
+    width="100%",
+)
+
 
 # To do list to render the items from the to do
 
@@ -215,9 +233,9 @@ def loans_list() -> rx.Component:
     return rx.ordered_list(
         rx.container(
         rx.foreach(State.show_loans, lambda loan: todo_loan(loan)),
-        border_radius=styles.border_radius,
-            box_shadow=styles.box_shadow,
-            width="100%",
+        # border_radius=styles.border_radius,
+        #     box_shadow=styles.box_shadow,
+        #     width="100%",
         ),
     )
 
@@ -242,11 +260,14 @@ def sidebar() -> rx.Component:
                 rx.text("Loan Information",
                         class_name="text-black-500 font-bold text-2xl"),
                 rx.container(
+                    rx.text("Information List",
+                        class_name="text-black-500 font-bold"),
 
                     loans_list(),
                     new_loan(),
 
                     padding="1rem",
+                    background_color="white",
                     border=styles.border,
                     border_radius=styles.border_radius,
                     box_shadow=styles.box_shadow,
@@ -272,4 +293,5 @@ def sidebar() -> rx.Component:
         overflow_y="auto",
         top="0px",
         border_right=styles.border,
+        background_color="#F6F6F6",
     )
