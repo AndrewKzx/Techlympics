@@ -4,15 +4,8 @@ from datetime import datetime
 import reflex as rx
 import plotly.express as px
 import plotly.graph_objects as go
-import pandas as pd
+import pynecone.model as model_code
 from bardapi import Bard
-
-import numpy as np
-import tensorflow as tf
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense, BatchNormalization, Activation
-from tensorflow.keras.regularizers import l2
-from tensorflow.keras.callbacks import EarlyStopping
 
 
 class State(rx.State):
@@ -46,18 +39,12 @@ class State(rx.State):
         )
     )
 
-    figure_loading: str = "Ready for input"
+    figure_description_1_constant: str = "The gap between real monthly income and real monthly expenses represents your real disposable income adjusted for inflation. "
+
+    figure_description_1: str = ""
+    figure_description_2: str = ""
+    bard_ouput: str = ""
     # ===== Figure Data =====
-
-    # ===== Chatbot API =====
-    bard = Bard(
-        "xxxxx"
-    )
-
-    def getChatAnswer(self, prompt):
-        answer = self.bard.get_answer(prompt)
-        return answer['content']
-    # ===== Chatbot API =====
 
     # ===== State Fields =====
 
@@ -131,7 +118,7 @@ class State(rx.State):
         real_income = [household_income]
         for m in range(len(months)):
             real_income.append(
-                real_income[m - 1] * (1 - predicted_inflation[m] / 100)
+                real_income[m - 1] * ((100 - predicted_inflation[m]) / 100)
             )
 
         monthly_income_trace = go.Scatter(x=months, y=real_income, mode='lines',
@@ -162,7 +149,8 @@ class State(rx.State):
             )
         )
 
-        return figure
+        # The figure, initial disposable income, final disposal income
+        return figure, real_income[0] - real_full_expenses[0], real_income[-1] - real_full_expenses[-1]
 
     def create_figure_two(self, data_of_loans, monthly_expenses, months) -> go.Figure:
         # Create a stacked chart, with basic neccesity at the bottom, and stacked on top are loans
@@ -271,11 +259,11 @@ class State(rx.State):
 
         # Initialise with the first value (because its compounding)
         processedLoanData["real_monthly_payment"] = [
-            processedLoanData["installment_payment"] * (1 - predicted_inflation[start_offset] / 100)]
+            processedLoanData["installment_payment"] * ((100 - predicted_inflation[start_offset]) / 100)]
 
         for i in range(1, len(processedLoanData["months_x"])):
             processedLoanData["real_monthly_payment"].append(
-                processedLoanData["real_monthly_payment"][i - 1] * (1 - predicted_inflation[start_offset + i] / 100))
+                processedLoanData["real_monthly_payment"][i - 1] * ((100 - predicted_inflation[start_offset + i]) / 100))
 
     def create_figures(self, household_income, monthly_expenses) -> go.Figure:
         # Get the loans (recalculates all loans, if new loan added would re-calculate)
@@ -304,12 +292,12 @@ class State(rx.State):
         if (lowest_start_year > 2023):
             # bigger than 2023 (constant 5 for from August 2023)
             model_sy = 2023
-            model_sm = 8
+            model_sm = 6
         elif (lowest_start_year == 2023):
             # is 2023
-            if (lowest_start_month > 8):
-                # if month bigger than 8, set it to 8 and set offset
-                model_sm = 8
+            if (lowest_start_month > 6):
+                # if month bigger than 6, set it to 6 and set offset
+                model_sm = 6
 
         # Model sy and sm will only be lower than 2023 Aug if a loan is lower than that. Offset is difference between required start date of loans,
         # and actual date of model considerations
@@ -318,9 +306,8 @@ class State(rx.State):
         offset = offset if offset > 0 else 0
 
         # offset is from model_sy and model_sm considerations
-        predicted_inflation, predicted_overall_inflation = predict_inflation(
-            create_date_range(model_sy, model_sm,
-                              period_from_starting_date + offset)
+        predicted_inflation = model_code.forecast_future_CPI(
+            model_sy, model_sm, period_from_starting_date + offset
         )
 
         # now only predicted inflation from required loan start date till the end of all loans
@@ -343,69 +330,44 @@ class State(rx.State):
 
         # ===== Figure Drawing =====
         # Income vs Loan
-        self.figure_plt_1 = self.create_figure_one(
+        self.figure_plt_1, initial_disposal, final_disposal = self.create_figure_one(
             household_income, data_of_loans, monthly_expenses, months, predicted_inflation
         )
 
+        self.figure_description_1 = self.figure_description_1_constant + \
+            f"Start of loan(s) disposable income: RM{'{:.2f}'.format(initial_disposal)}. Ebd of loan(s) disposable income: RM{'{:.2f}'.format(final_disposal)}."
+
+        # Expenses breakdown data
         self.figure_plt_2 = self.create_figure_two(
             data_of_loans, monthly_expenses, months
         )
 
         print("creation done")
 
-# ===== Model Code =====
+        lowest_start_year = min([x["start_year"] for x in data_of_loans])
+        lowest_start_month = min(
+            [x["start_month"] for x in data_of_loans if x["start_year"] == lowest_start_year])
 
+        # Comment out for Bard
+        self.chat_ask(household_income, monthly_expenses, initial_disposal, [
+                      lowest_start_month, lowest_start_year], final_disposal, [highest_end_month, highest_end_year])
 
-def read_data():
-    df = pd.read_csv('./pynecone/model/cleaned_data.csv')
-    df['date'] = pd.to_datetime(df['date'])
-    df.set_index('date', inplace=True)
-    return df
+    def chat_ask(self, household_income, monthly_expenses, initial_disposal, initial_date, final_disposal, final_date):
+        bard = Bard(
+            "dQiLlaJ7FiLrgeKfMxQ2CBdadHOFgSqdiska6PT1RerIhfd2HnvFs6FX9SOIFPUdIUFVCA."
+        )
+        prompt = f"Given the following financial data, assess the feasiblity of someone with a monthly household income of RM{household_income} and monthly expesnes of RM{monthly_expenses} affording the following loans. Provide professional financial advice on whether or not they should take these loans. Consider the change in disposal income from RM{'{:.2f}'.format(initial_disposal)} in {initial_date[1]}/{initial_date[0]} to RM{'{:.2f}'.format(final_disposal)} in {final_date[1]}/{final_date[0]} after accounting for inflation.\n"
 
+        for loanData in self.loans_from_user:
+            prompt += f"{loanData['name']} "
+            prompt += f"Date: {loanData['sym']} "
+            prompt += f"Loan Value: RM{loanData['loan']} "
+            prompt += f"Interest Rate: {loanData['interest']}% "
+            prompt += f"Installment Period: {loanData['installment']} months\n"
 
-def create_date_range(start_year: int, start_month: int, num_of_months: int):
-    start_month = str(start_year) + "-" + str(start_month).rjust(2, "0")
-    return pd.date_range(start_month, freq='M', periods=num_of_months)
+        prompt += "Analyze the financial impact of these loans on the individual's budget, considering the gradual reduction in dosposable income and the long-term implications of managing these loans alongside other living expenses. Don't give additional number analysis and calculations, just paragraph of words and only in two short paragraphs"
+        print(prompt)
 
-
-df = read_data()
-sequence_length = 12
-
-# Model initialise
-model = Sequential()
-model.add(LSTM(64, input_shape=(12, 1),
-          kernel_regularizer=l2(0.01), return_sequences=False))
-model.add(Dense(32, kernel_regularizer=l2(0.01)))
-model.add(Dense(1))
-model.compile(optimizer='adam', loss='mean_squared_error')
-model.load_weights("./pynecone/model/cp.ckpt")
-
-
-def predict_inflation(date_range):
-    number_of_months = len(date_range)
-
-    start_date = date_range[0] - pd.DateOffset(months=sequence_length)
-
-    date_range = pd.date_range(start_date, freq="M", periods=sequence_length)
-    initial_data = df["base_inflation"][date_range]
-    initial_inflation = df["overall_inflation"][date_range]
-
-    predicted_inflation = []
-    predicted_overall_inflation = []
-    previous_inflation = initial_inflation[-1]
-    for i in range(number_of_months):
-        # Slice the portion of initial_data for prediction
-        input_sequence = initial_data[i: i + sequence_length]
-        prediction = model.predict(input_sequence, verbose=0)
-        predicted_value = prediction[0][0]
-
-        predicted_inflation.append(predicted_value)
-        previous_inflation = previous_inflation * (1 + predicted_value / 100)
-        predicted_overall_inflation.append(previous_inflation)
-
-        initial_data = pd.concat([initial_data, pd.Series([predicted_value])])
-        initial_inflation = pd.concat(
-            [initial_inflation, pd.Series([previous_inflation])])
-
-    return predicted_inflation, predicted_overall_inflation
-# ===== Model Code =====
+        answer = bard.get_answer(prompt)
+        print(answer)
+        self.bard_ouput = answer['content']
