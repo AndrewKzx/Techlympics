@@ -22,7 +22,8 @@ def index() -> rx.Component:
         rx.text("Breakdown of Real Monthly Expenses (Stacked)",
                 font_weight="bold",
                 font_size="1em",
-                color="forestgreen"
+                color="forestgreen",
+                margin_top="2rem"
                 ),
         rx.plotly(data=State.figure_plt_2),
     )

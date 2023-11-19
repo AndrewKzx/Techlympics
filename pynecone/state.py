@@ -131,7 +131,7 @@ class State(rx.State):
                                          name='Real Monthly Expenses', fill='tozeroy',
                                          marker=dict(color='red', line=dict(
                                              color='red', width=2)),
-                                         fillcolor='rgba(255, 0, 0, 0.3)')
+                                         fillcolor='#ff0000')
 
         figure = go.Figure(
             data=[monthly_income_trace, full_expenses_trace],
@@ -233,7 +233,7 @@ class State(rx.State):
 
         loan_amt = int(loanData["loan"])
         loan_interest = 1.0 + (int(loanData["interest"]) / 100)
-        processed["installment_months"] = float(loanData["installment"])
+        processed["installment_months"] = int(loanData["installment"])
         processed["installment_payment"] = (
             loan_amt * loan_interest
         ) / processed["installment_months"]
