@@ -27,8 +27,6 @@ def index() -> rx.Component:
                 box_shadow=styles.box_shadow,
                 ),
                 
-
-
                 rx.text("Breakdown of Real Monthly Expenses (Stacked)",
                         font_weight="bold",
                         font_size="1em",
