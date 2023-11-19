@@ -341,7 +341,7 @@ class State(rx.State):
         )
 
         self.figure_description_1 = self.figure_description_1_constant + \
-            f"Start of loan(s) disposable income: RM{'{:.2f}'.format(initial_disposal)}. Ebd of loan(s) disposable income: RM{'{:.2f}'.format(final_disposal)}."
+            f"Start of loan(s) disposable income: RM{'{:.2f}'.format(initial_disposal)}. End of loan(s) disposable income: RM{'{:.2f}'.format(final_disposal)}."
 
         # Expenses breakdown data
         self.figure_plt_2 = self.create_figure_two(
@@ -360,7 +360,7 @@ class State(rx.State):
 
     def chat_ask(self, household_income, monthly_expenses, initial_disposal, initial_date, final_disposal, final_date):
         bard = Bard(
-            "dQiLlaJ7FiLrgeKfMxQ2CBdadHOFgSqdiska6PT1RerIhfd2HnvFs6FX9SOIFPUdIUFVCA."
+            "dQgos0qcETfjjxFRvMxixNiEwNVgfaxv1H5iWg_iqf4Z3xGJzSwGBWDY86-rucBaZOYCgA."
         )
         prompt = f"Given the following financial data, assess the feasiblity of someone with a monthly household income of RM{household_income} and monthly expesnes of RM{monthly_expenses} affording the following loans. Provide professional financial advice on whether or not they should take these loans. Consider the change in disposal income from RM{'{:.2f}'.format(initial_disposal)} in {initial_date[1]}/{initial_date[0]} to RM{'{:.2f}'.format(final_disposal)} in {final_date[1]}/{final_date[0]} after accounting for inflation.\n"
 

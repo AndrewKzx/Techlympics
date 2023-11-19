@@ -19,7 +19,14 @@ def index() -> rx.Component:
                         color="forestgreen"
                         ),
                 rx.plotly(data=State.figure_plt_1),
+                rx.container(
+                        
                 rx.text(State.figure_description_1),
+                border=styles.border,
+                border_radius=styles.border_radius,
+                box_shadow=styles.box_shadow,
+                ),
+                
 
 
                 rx.text("Breakdown of Real Monthly Expenses (Stacked)",
@@ -30,6 +37,12 @@ def index() -> rx.Component:
                         ),
                 rx.plotly(data=State.figure_plt_2),
                 rx.text(State.figure_description_2),
+                rx.container(
                 rx.text(State.bard_ouput),
+                border=styles.border,
+                border_radius=styles.border_radius,
+                box_shadow=styles.box_shadow,
+                ),
+                
                 bard_output_html,
         )
