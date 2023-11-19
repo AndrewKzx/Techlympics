@@ -371,12 +371,8 @@ class State(rx.State):
             prompt += f"Interest Rate: {loanData['interest']}% "
             prompt += f"Installment Period: {loanData['installment']} months\n"
 
-<<<<<<< Updated upstream
         prompt += "Analyze the financial impact of these loans on the individual's budget, considering the gradual reduction in dosposable income and the long-term implications of managing these loans alongside other living expenses. Don't give additional number analysis and calculations, just paragraph of words and only in one short paragraphs"
         print(prompt)
-=======
-        prompt += "Analyze the financial impact of these loans on the individual's budget, considering the gradual reduction in dosposable income and the long-term implications of managing these loans alongside other living expenses. Don't give additional number analysis and calculations, just paragraph of words and only in two short paragraphs"
->>>>>>> Stashed changes
 
         answer = bard.get_answer(prompt)
         self.bard_ouput = answer['content']
