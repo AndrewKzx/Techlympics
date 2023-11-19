@@ -5,8 +5,8 @@ import { ColorModeContext, EventLoopContext, initialEvents, StateContext } from 
 import "focus-visible/dist/focus-visible"
 import { Modal, ModalBody, ModalContent, ModalHeader, ModalOverlay, Text } from "@chakra-ui/react"
 import { getEventURL } from "/utils/state.js"
-import { useClientSideRouting } from "/utils/client_side_routing"
 import Error from "next/error"
+import { useClientSideRouting } from "/utils/client_side_routing"
 import NextHead from "next/head"
 
 
