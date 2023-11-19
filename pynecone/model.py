@@ -1,3 +1,4 @@
+import datetime
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -5,14 +6,17 @@ from functools import reduce
 
 import tensorflow as tf
 from tensorflow.keras.models import Model, Sequential, load_model
-from tensorflow.keras.layers import Dense, Dropout, InputLayer
+from tensorflow.keras.layers import Dense, Dropout, InputLayer, concatenate, Input, LSTM
 from tensorflow.keras.regularizers import l2
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.utils import plot_model
 
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, mean_absolute_error
+from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
+from statsmodels.tsa.seasonal import seasonal_decompose
 
 
 def read_gov_data(URL_LINK):
@@ -22,11 +26,6 @@ def read_gov_data(URL_LINK):
         df.set_index('date', inplace=True)
 
     return df
-
-
-def create_date_range(start_year: int, start_month: int, num_of_months: int):
-    start_month = str(start_year) + "-" + str(start_month).rjust(2, "0")
-    return pd.date_range(start_month, freq='M', periods=num_of_months)
 
 
 def find_date_range(datasets):
@@ -81,6 +80,31 @@ def read_data():
 
     data["labour_unemployed"] = get_col_from(lfs_df, "unemployed")
     data["labour_employed"] = get_col_from(lfs_df, "employed")
+
+    data["cpi_trend"] = seasonal_decompose(
+        data["cpi_overall"], model='additive', period=12).trend
+    data['cpi_trend'].fillna(method='ffill', inplace=True)
+    data['cpi_trend'].fillna(method='bfill', inplace=True)
+
+    data["ipi_trend"] = seasonal_decompose(
+        data["ipi_overall"], model='additive', period=12).trend
+    data['ipi_trend'].fillna(method='ffill', inplace=True)
+    data['ipi_trend'].fillna(method='bfill', inplace=True)
+
+    data["ppi_trend"] = seasonal_decompose(
+        data["ppi_overall"], model='additive', period=12).trend
+    data['ppi_trend'].fillna(method='ffill', inplace=True)
+    data['ppi_trend'].fillna(method='bfill', inplace=True)
+
+    data["labour_unemployed_trend"] = seasonal_decompose(
+        data["labour_unemployed"], model='additive', period=12).trend
+    data['labour_unemployed_trend'].fillna(method='ffill', inplace=True)
+    data['labour_unemployed_trend'].fillna(method='bfill', inplace=True)
+
+    data["labour_employed_trend"] = seasonal_decompose(
+        data["labour_employed"], model='additive', period=12).trend
+    data['labour_employed_trend'].fillna(method='ffill', inplace=True)
+    data['labour_employed_trend'].fillna(method='bfill', inplace=True)
     return data
 
 
@@ -89,40 +113,45 @@ data = read_data()
 train_ratio = 0.6
 val_ratio = 0.2
 test_ratio = 0.2
+# @title Loading data for model
 
-train_size = int(len(data) * train_ratio)
-val_size = int(len(data) * val_ratio)
-test_size = int(len(data) * test_ratio)
-
-val_size_cum = train_size + val_size
-test_size_cum = len(data)
-
-print("Train : " + str(train_size))
-print("Val : " + str(val_size) + ", cumulative : " + str(val_size_cum))
-print("Test : " + str(test_size) + ", cumulative : " + str(test_size_cum))
-
+# input_columns =  [
+#     'cpi_overall',
+#     'ppi_overall',
+#     'ipi_overall',
+#     'labour_employed',
+#     'labour_unemployed',
+# ]
 input_columns = [
-    'cpi_overall',
-    'ppi_overall',
-    'ipi_overall',
-    'labour_employed',
-    'labour_unemployed',
+    'cpi_trend',
+    'ppi_trend',
+    'ipi_trend',
+    'labour_employed_trend',
+    'labour_unemployed_trend',
 ]
 target_column = ['cpi_overall']
 target_forecast_months = [3, 6, 9, 12]
 max_forecast_months = max(target_forecast_months)
 
+X, y = [], []
+for i in range(len(data) - max_forecast_months):
+    X.append(data[input_columns].iloc[i])
+    y.append([data[target_column].iloc[i+j][0]
+             for j in target_forecast_months])
+X = np.array(X)
+y = np.array(y)
 
-def create_sequences(data_slice):
-    X, y = [], []
-    for i in range(len(data_slice) - max_forecast_months):
-        X.append(data_slice[input_columns].iloc[i])
-        y.append([data_slice[target_column].iloc[i+j][0]
-                 for j in target_forecast_months])
-    return np.array(X), np.array(y)
+train_size = int(len(X) * train_ratio)
+val_size = int(len(X) * val_ratio)
+test_size = int(len(X) * test_ratio)
 
+val_size_cum = train_size + val_size
+test_size_cum = len(X)
 
-X, y = create_sequences(data)
+print("Train : " + str(train_size))
+print("Val : " + str(val_size) + ", cumulative : " + str(val_size_cum))
+print("Test : " + str(test_size) + ", cumulative : " + str(test_size_cum))
+
 X_train_total, y_train_total = X[: val_size_cum], y[: val_size_cum]
 X_train, X_val, y_train, y_val = train_test_split(
     X_train_total, y_train_total, test_size=val_ratio, random_state=42)
@@ -144,14 +173,25 @@ y_test_scaled = scaler_y.transform(y_test)
 input_shape = (X_train_scaled.shape[1], )
 output_shape = len(target_forecast_months)
 
+print("Train X shape : " + str(X_train_scaled.shape))
+print("Train Y shape : " + str(y_train_scaled.shape))
+print("Val X shape : " + str(X_val_scaled.shape))
+print("Val Y shape : " + str(y_val_scaled.shape))
+print("Test X shape : " + str(X_test_scaled.shape))
+print("Test Y shape : " + str(y_test_scaled.shape))
 
 model = load_model("./pynecone/model/my_model_3_6_9_12.h5")
+
+selected_forecast_levels = [3]
 
 
 def forecast_future_CPI(start_year: int, start_month: int, num_of_months: int):
     start_month = str(start_year) + "-" + str(start_month).rjust(2, "0")
     date_range = pd.date_range(start_month, freq='MS', periods=num_of_months)
     # date_range = create_date_range(start_year, start_month, num_of_months)
+
+    data = read_data()
+    model = load_model("./pynecone/model/my_model_3_6_9_12.h5")
 
     input_date = date_range[0]
     inputs = data.loc[input_date][input_columns]
@@ -164,8 +204,9 @@ def forecast_future_CPI(start_year: int, start_month: int, num_of_months: int):
     initial_val = data.loc[input_date][target_column].array[0]
     previous_start_val = initial_val
     previous_months_count = 0
-    for i in range(1, len(target_forecast_months)):
-        months_count = target_forecast_months[i] - previous_months_count
+
+    for i in range(0, len(selected_forecast_levels)):
+        months_count = selected_forecast_levels[i] - previous_months_count
         forecast_val = forecast[i]
 
         monthly_increment = (forecast_val - previous_start_val) / months_count
@@ -174,13 +215,12 @@ def forecast_future_CPI(start_year: int, start_month: int, num_of_months: int):
             cpi_over_time.append(previous_start_val + (monthly_increment * j))
 
         previous_start_val = forecast_val
-        previous_months_count = target_forecast_months[i]
+        previous_months_count = selected_forecast_levels[i]
 
     if len(cpi_over_time) > num_of_months:
         cpi_over_time = cpi_over_time[:num_of_months]
     else:
-        monthly_increment = abs(
-            max(forecast) - initial_val) / len(cpi_over_time)
+        monthly_increment = (max(forecast) - initial_val) / len(cpi_over_time)
         for i in range(len(cpi_over_time), num_of_months):
             cpi_over_time.append(cpi_over_time[-1] + monthly_increment)
 

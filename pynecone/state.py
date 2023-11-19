@@ -294,16 +294,16 @@ class State(rx.State):
         model_sy = lowest_start_year
         model_sm = lowest_start_month
 
-        # NOTICE: model's maximum / highest start date: 2023, 8 (Constraints of LSTM model)
+        # NOTICE: model's maximum / highest start date: 2023, 1 (Constraints of LSTM model)
         if (lowest_start_year > 2023):
-            # bigger than 2023 (constant 5 for from August 2023)
+            # bigger than 2023 (constant 5 for from June 2023)
             model_sy = 2023
-            model_sm = 6
+            model_sm = 1
         elif (lowest_start_year == 2023):
             # is 2023
-            if (lowest_start_month > 6):
-                # if month bigger than 6, set it to 6 and set offset
-                model_sm = 6
+            if (lowest_start_month > 1):
+                # if month bigger than 1, set it to 1 and set offset
+                model_sm = 1
 
         # Model sy and sm will only be lower than 2023 Aug if a loan is lower than that. Offset is difference between required start date of loans,
         # and actual date of model considerations
@@ -315,6 +315,7 @@ class State(rx.State):
         predicted_inflation = model_code.forecast_future_CPI(
             model_sy, model_sm, period_from_starting_date + offset
         )
+        print(predicted_inflation)
 
         # now only predicted inflation from required loan start date till the end of all loans
         predicted_inflation = predicted_inflation[offset:]
@@ -348,8 +349,6 @@ class State(rx.State):
             data_of_loans, monthly_expenses, months
         )
 
-        print("creation done")
-
         lowest_start_year = min([x["start_year"] for x in data_of_loans])
         lowest_start_month = min(
             [x["start_month"] for x in data_of_loans if x["start_year"] == lowest_start_year])
@@ -357,6 +356,7 @@ class State(rx.State):
         # Comment out for Bard
         self.chat_ask(household_income, monthly_expenses, initial_disposal, [
                       lowest_start_month, lowest_start_year], final_disposal, [highest_end_month, highest_end_year])
+        print("creation done")
 
     def chat_ask(self, household_income, monthly_expenses, initial_disposal, initial_date, final_disposal, final_date):
         bard = Bard(
