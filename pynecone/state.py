@@ -51,11 +51,11 @@ class State(rx.State):
 
     def add_item(self, form_data: dict[str, str]):
         # Create a new item string with new lines
-        new_item = f"Name: {form_data['name']}\n" \
-            f"Date: {form_data['sym']}\n" \
-            f"Value: {form_data['loan']}\n" \
-            f"Interest: {form_data['interest']}\n" \
-            f"Installment: {form_data['installment']}"
+        new_item = f"Name: {form_data['name']}<br>" \
+            f"Date: {form_data['sym']}<br>" \
+            f"Value: {form_data['loan']}<br>" \
+            f"Interest: {form_data['interest']}<br>" \
+            f"Installment: {form_data['installment']}<br>"
 
         # Add the new item to the list
         self.show_loans.append(new_item)

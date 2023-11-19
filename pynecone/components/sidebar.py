@@ -190,10 +190,12 @@ def todo_loan(item: rx.Var[str]) -> rx.Component:
     Returns:
         A single rendered todo list item.
     """
+   
+    
     return rx.list_item(
         rx.hstack(
             # A button to finish the item.
-            rx.text(item, font_size="1.25em"),
+            rx.html(item),
             rx.button(
                 "❌",
                 on_click=lambda: State.finish_item(item),
